@@ -48,7 +48,18 @@ public class CommonResult{
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public static CommonResult getSuccResult() {
+		CommonResult result = new CommonResult();
+		result.setSuccess(true);
+		return result;
+	}
 
+	public static CommonResult getSuccResultWithData(Object data) {
+		CommonResult result = new CommonResult();
+		result.setSuccess(true);
+		result.setResult(data);
+		return result;
+	}
 	
 
 }

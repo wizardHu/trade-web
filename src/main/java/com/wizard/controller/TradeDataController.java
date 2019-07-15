@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wizard.model.BuyDataModel;
+import com.wizard.model.CommonListResult;
 import com.wizard.model.CommonMapResult;
 import com.wizard.model.CommonResult;
-import com.wizard.model.RecordDataModel;
+import com.wizard.model.RecordAndStatisticsModel;
 import com.wizard.service.ITradeData;
 
 @RequestMapping("/tradeData")
@@ -30,13 +31,13 @@ public class TradeDataController {
     }
 	
 	@RequestMapping("/recordData")
-    public CommonResult getRecordData() {
+    public CommonListResult<RecordAndStatisticsModel> getRecordData() {
         return sshTradeDataImpl.getRecordDataModels();
     }
 	
-	@RequestMapping("/getStatistics")
-	public CommonResult getStatistics(String symbol) {
-		return null;
+	@RequestMapping("/getPresentPrice")
+	public CommonResult getPresentPrice(String symbol) {
+		return sshTradeDataImpl.getPresentPrice(symbol);
 	}
 	
 }

@@ -33,7 +33,7 @@ public class CommonListResult<T> extends CommonResult{
 		return result;
 	}
 
-	public static <T> CommonListResult<T> getSuccResult() {
+	public static <T> CommonListResult<T> getSuccListResult() {
 		CommonListResult<T> result = new CommonListResult<T>();
 		result.setSuccess(true);
 		return result;

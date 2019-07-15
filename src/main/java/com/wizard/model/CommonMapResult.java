@@ -34,7 +34,7 @@ public class CommonMapResult<T,K> extends CommonResult{
 		return result;
 	}
 
-	public static <T,K> CommonMapResult<T,K> getSuccResult() {
+	public static <T,K> CommonMapResult<T,K> getSuccMapResult() {
 		CommonMapResult<T,K> result = new CommonMapResult<T,K>();
 		result.setSuccess(true);
 		return result;

@@ -5,6 +5,7 @@ import java.util.List;
 import com.wizard.model.BuyDataModel;
 import com.wizard.model.CommonListResult;
 import com.wizard.model.CommonMapResult;
+import com.wizard.model.CommonResult;
 import com.wizard.model.RecordAndStatisticsModel;
 
 public interface ITradeData {
@@ -24,5 +25,14 @@ public interface ITradeData {
 	 * @return
 	 */
 	CommonListResult<RecordAndStatisticsModel> getRecordDataModels();
+	
+	/**
+	 * 得到当前价格
+	 * @author hulujie
+	 * @since 2019年7月15日 上午11:05:16
+	 * @param symbol
+	 * @return
+	 */
+	CommonResult getPresentPrice(String symbol);
 	
 }

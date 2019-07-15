@@ -10,9 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.wizard.model.BuyDataModel;
 import com.wizard.model.CommonListResult;
 import com.wizard.model.CommonMapResult;
+import com.wizard.model.CommonResult;
 import com.wizard.model.RecordAndStatisticsModel;
 import com.wizard.model.RecordDataModel;
 import com.wizard.model.StatisticsModel;
@@ -56,6 +60,27 @@ public class SshTradeDataImpl implements ITradeData {
 		return CommonListResult.getSuccResultWithData(recordAndStatisticsModelList);
 		
 	}
+	
+	
+	@Override
+	public CommonResult getPresentPrice(String symbol) {
+
+		String jsonResult = SshUtil.execCommand("python amplee/BiTradeUtil.py "+symbol);
+		
+		logger.info("command myshell/getRecord.sh result={}",jsonResult);
+		
+		JSONObject json = JSONObject.parseObject(jsonResult);
+		if(json != null) {
+			JSONArray array = JSON.parseArray(json.get("data")+"");
+			if(array!= null && array.size() > 0) {
+				String close = array.getJSONObject(0).get("close")+"";
+				return CommonResult.getSuccResultWithData(close);
+			}
+		}
+		
+		return CommonResult.getSuccResult();
+	}
+	
 
 	/**
 	 * 参数组装
@@ -182,6 +207,8 @@ public class SshTradeDataImpl implements ITradeData {
 			}
 		}
 		
+		list.sort((RecordDataModel h1, RecordDataModel h2) -> h2.getTimeStamp().compareTo(h1.getTimeStamp()));
+		
 		return list;
 	}
 
@@ -220,7 +247,6 @@ public class SshTradeDataImpl implements ITradeData {
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 			}
-			
 		}
 		
 		return list;
