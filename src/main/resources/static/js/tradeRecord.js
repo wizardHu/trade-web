@@ -57,7 +57,7 @@ function createShowingTable(data) {
 			data:{"symbol":data[index].symbol},
 			success : function(data2) {
 				finalProfit = data[index].statisticsModel.expend + data[index].statisticsModel.surplus*data2.result*0.998
-				statisticsModel = statisticsModel + "   presentPrice : "+data2.result + "   finalProfit : "+finalProfit
+				statisticsModel = statisticsModel + "   presentPrice : "+data2.result + "   finalProfit : "+finalProfit+ "   predictNextBuy : "+data2.result*0.985
 			}
 		});
 			
