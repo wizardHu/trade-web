@@ -1,6 +1,8 @@
 package com.wizard.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,6 +24,7 @@ import com.wizard.model.RecordDataModel;
 import com.wizard.model.StatisticsModel;
 import com.wizard.service.ITradeData;
 import com.wizard.util.Constant;
+import com.wizard.util.DateUtils;
 import com.wizard.util.SshUtil;
 
 @Service("sshTradeDataImpl")
@@ -65,9 +68,10 @@ public class SshTradeDataImpl implements ITradeData {
 	@Override
 	public CommonResult getPresentPrice(String symbol) {
 
-		String jsonResult = SshUtil.execCommand("python amplee/BiTradeUtil.py "+symbol);
+		String command = "python amplee/BiTradeUtil.py "+symbol+" 1min "+1;
+		String jsonResult = SshUtil.execCommand(command);
 		
-		logger.info("command myshell/getRecord.sh result={}",jsonResult);
+		logger.info("command {} result={}",command,jsonResult);
 		
 		JSONObject json = JSONObject.parseObject(jsonResult);
 		if(json != null) {
@@ -79,6 +83,35 @@ public class SshTradeDataImpl implements ITradeData {
 		}
 		
 		return CommonResult.getSuccResult();
+	}
+	
+	@Override
+	public CommonListResult<Object[]> getKline(String symbol, String period, int size) {
+
+		String command = "python amplee/BiTradeUtil.py "+symbol+" "+period+" "+size;
+		String jsonResult = SshUtil.execCommand(command);
+		logger.info("command {} result.length={}",command,jsonResult.length());
+		
+		List<Object[]> list = new ArrayList<>();
+		
+		JSONObject json = JSONObject.parseObject(jsonResult);
+		if(json != null) {
+			JSONArray array = JSON.parseArray(json.get("data")+"");
+			if(array!= null && array.size() > 0) {
+				for (int i = 0; i < array.size(); i++) {
+					String close = array.getJSONObject(i).get("close")+"";
+					String open =  array.getJSONObject(i).get("open")+"";
+					String high =  array.getJSONObject(i).get("high")+"";
+					String low =  array.getJSONObject(i).get("low")+"";
+					String date =  DateUtils.formatDate(new Date(Long.parseLong(array.getJSONObject(i).get("id")+"000")),"MM-dd HH:mm:ss");
+					
+					Object[] obj = new Object[] {date,open,close,low,high};
+					list.add(0, obj);
+				}
+			}
+		}
+		
+		return CommonListResult.getSuccResultWithData(list);
 	}
 	
 
@@ -251,5 +284,4 @@ public class SshTradeDataImpl implements ITradeData {
 		
 		return list;
 	}
-
 }

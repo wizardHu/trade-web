@@ -40,4 +40,9 @@ public class TradeDataController {
 		return sshTradeDataImpl.getPresentPrice(symbol);
 	}
 	
+	@RequestMapping("/getKline")
+	public CommonResult getKline(String symbol, String period, int size) {
+		return sshTradeDataImpl.getKline(symbol, period, size);
+	}
+	
 }

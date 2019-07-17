@@ -35,4 +35,15 @@ public interface ITradeData {
 	 */
 	CommonResult getPresentPrice(String symbol);
 	
+	/**
+	 *  k线
+	 * @author hulujie
+	 * @since 2019年7月16日 下午8:32:00
+	 * @param symbol
+	 * @param period
+	 * @param size
+	 * @return
+	 */
+	CommonListResult<Object[]> getKline(String symbol, String period,int size);
+	
 }
