@@ -14,6 +14,7 @@ import com.wizard.model.CommonListResult;
 import com.wizard.model.CommonMapResult;
 import com.wizard.model.CommonResult;
 import com.wizard.model.RecordAndStatisticsModel;
+import com.wizard.model.RecordDataModel;
 import com.wizard.service.ITradeData;
 
 @RequestMapping("/tradeData")
@@ -44,5 +45,10 @@ public class TradeDataController {
 	public CommonResult getKline(String symbol, String period, int size) {
 		return sshTradeDataImpl.getKline(symbol, period, size);
 	}
+	
+	@RequestMapping("/symbolRecordData")
+    public CommonListResult<RecordDataModel> getRecordDataBySymbol(String symbol) {
+        return sshTradeDataImpl.getRecordDataBySymbol(symbol);
+    }
 	
 }

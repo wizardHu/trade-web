@@ -5,22 +5,42 @@ var downBorderColor = '#008F28';
 
 // 数据意义：开盘(open)，收盘(close)，最低(lowest)，最高(highest)
 
+var data0 = "";
+var myChart = echarts.init(document.getElementById('main'));
+myChart.setOption({
+    title: {
+        text: '稍后'
+    },
+    tooltip: {},
+    xAxis: {
+        data: []
+    },
+    yAxis: {}
+});
+
 
 $(function() {
-
-	var data0 = splitData([
-	                       ['2013/1/24', 2320.26,2320.26,2287.3,2362.94]
-	                   ]);
 	
-	var myChart = echarts.init(document.getElementById('main'));
-
+	
+	cc = [ {
+		name : 'XX标点2',
+		coord : [ '07-17 15:10:00', 3.6 ],
+		value : 3.6,
+		itemStyle : {
+			normal : {
+				color : 'rgb(41,60,85)'
+			}
+		}
+	}]
+	
+	myChart.showLoading();
 	$.ajax({
 		type : "POST",
 		dataType : "json",
 		url : "/tradeData/getKline?symbol=eosusdt&period=1min&size=2000",
 		success : function(data) {
 			var list = []
-			
+			myChart.hideLoading();
 			for(i=0;i<data.resultList.length;i++){
 				var list2 = []
 				list2.push(data.resultList[i][0])
@@ -33,6 +53,43 @@ $(function() {
 			}
 			
 			data0 = splitData(list)
+			
+			
+			$.ajax({
+				type : "POST",
+				dataType : "json",
+				async : false,
+				url : "/tradeData/symbolRecordData",
+				data : {
+					"symbol" : "eos"
+				},
+				success : function(data2) {
+					
+					for(i=0;i<data2.resultList.length;i++){
+						var dict ={}
+						var indexData = data2.resultList[i]
+						dict["name"]=indexData.timeStamp
+						dict["coord"]=[indexData.timeStampStr]
+						dict["name"]=indexData.timeStamp
+					}
+					
+					
+					
+					{
+						name : 'XX标点',
+						coord : [ '07-18 15:10:00', 3.8 ],
+						value : 3.8,
+						itemStyle : {
+							normal : {
+								color : 'rgb(41,60,85)'
+							}
+						}
+					}
+					
+				}
+			});
+			
+			
 
 			option = {
 				title : {
@@ -106,25 +163,7 @@ $(function() {
 										}
 									}
 								},
-								data : [ /*{
-									name : 'XX标点',
-									coord : [ '2013/5/31', 2300 ],
-									value : 2300,
-									itemStyle : {
-										normal : {
-											color : 'rgb(41,60,85)'
-										}
-									}
-								}, {
-									name : 'XX标点',
-									coord : [ '2013/4/22', 2300 ],
-									value : 2300,
-									itemStyle : {
-										normal : {
-											color : 'rgb(41,60,85)'
-										}
-									}
-								},*/ {
+								data : [{
 									name : 'highest value',
 									type : 'max',
 									valueDim : 'highest'
@@ -188,12 +227,18 @@ $(function() {
 
 				]
 			};
-
+			
+			for(i=0;i<cc.length;i++){
+				option.series[0].markPoint.data.push(cc[i])
+			}
+			
 			myChart.setOption(option);
 		}
 	});
 	
-	function splitData(rawData) {
+})
+
+function splitData(rawData) {
 	    var categoryData = [];
 	    var values = []
 	    for (var i = 0; i < rawData.length; i++) {
@@ -221,5 +266,3 @@ $(function() {
 	    }
 	    return result;
 	}
-
-})

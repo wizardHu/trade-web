@@ -114,6 +114,20 @@ public class SshTradeDataImpl implements ITradeData {
 		return CommonListResult.getSuccResultWithData(list);
 	}
 	
+	@Override
+	public CommonListResult<RecordDataModel> getRecordDataBySymbol(String symbol) {
+
+		String command = "myshell/getRecordBySymbol.sh "+symbol+"-record";
+		String jsonResult = SshUtil.execCommand(command);
+		logger.info("command {} result.length={}",command,jsonResult.length());
+		
+		List<RecordDataModel> list = new ArrayList<RecordDataModel>();
+		
+		list = builRecordModel(jsonResult);
+		
+		return CommonListResult.getSuccResultWithData(list);
+	}
+	
 
 	/**
 	 * 参数组装
@@ -188,6 +202,16 @@ public class SshTradeDataImpl implements ITradeData {
 		logger.info("command myshell/getRecord.sh result.length={}",result.length());
 		List<RecordDataModel> list = new ArrayList<RecordDataModel>();
 		
+		list = builRecordModel(result);
+		
+		list.sort((RecordDataModel h1, RecordDataModel h2) -> h2.getTimeStamp().compareTo(h1.getTimeStamp()));
+		
+		return list;
+	}
+
+
+	private List<RecordDataModel> builRecordModel(String result) {
+		List<RecordDataModel> list = new ArrayList<RecordDataModel>();
 		if(!StringUtils.isEmpty(result)) {
 			
 			String sz[] = result.split("\r\n");
@@ -239,8 +263,6 @@ public class SshTradeDataImpl implements ITradeData {
 				logger.error(e.getMessage(), e);
 			}
 		}
-		
-		list.sort((RecordDataModel h1, RecordDataModel h2) -> h2.getTimeStamp().compareTo(h1.getTimeStamp()));
 		
 		return list;
 	}

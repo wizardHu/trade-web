@@ -7,6 +7,7 @@ import com.wizard.model.CommonListResult;
 import com.wizard.model.CommonMapResult;
 import com.wizard.model.CommonResult;
 import com.wizard.model.RecordAndStatisticsModel;
+import com.wizard.model.RecordDataModel;
 
 public interface ITradeData {
 
@@ -45,5 +46,14 @@ public interface ITradeData {
 	 * @return
 	 */
 	CommonListResult<Object[]> getKline(String symbol, String period,int size);
+
+	/**
+	 * 根据交易对得到
+	 * @author hulujie
+	 * @since 2019年7月19日 下午3:45:22
+	 * @param symbol
+	 * @return
+	 */
+	CommonListResult<RecordDataModel> getRecordDataBySymbol(String symbol);
 	
 }
