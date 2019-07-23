@@ -85,9 +85,9 @@ function createShowingTable(data) {
 		success : function(data) {
 			accountSum = accountSum + parseInt(data.result)
 			
-			orgBlance = 28.2791;
+			orgBlance = 36.2991;
 			
-			accountStr = "orgBalance: "+orgBlance+" balance: "+accountSum+" profit: "+ (accountSum-orgBlance)/orgBlance*100+"%"
+			accountStr = "orgBalance: "+orgBlance+" balance: "+accountSum+" profit: "+ ((accountSum-orgBlance)/orgBlance*100).toFixed(2)+"%"
 		}
 	});
 	
