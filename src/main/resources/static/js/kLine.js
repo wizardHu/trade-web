@@ -37,7 +37,7 @@ $(function() {
 	$.ajax({
 		type : "POST",
 		dataType : "json",
-		url : "/tradeData/getKline?symbol=eosusdt&period=1min&size=2000",
+		url : "/tradeData/getKline?symbol=btcusdt&period=1min&size=2000",
 		success : function(data) {
 			var list = []
 			myChart.hideLoading();
@@ -53,7 +53,7 @@ $(function() {
 			}
 			
 			data0 = splitData(list)
-			
+			buySellPoint = []
 			
 			$.ajax({
 				type : "POST",
@@ -61,31 +61,33 @@ $(function() {
 				async : false,
 				url : "/tradeData/symbolRecordData",
 				data : {
-					"symbol" : "eos"
+					"symbol" : "btcusdt"
 				},
 				success : function(data2) {
 					
 					for(i=0;i<data2.resultList.length;i++){
 						var dict ={}
+						var itemStyle = {}
+						var normal ={}
+						
 						var indexData = data2.resultList[i]
+						
 						dict["name"]=indexData.timeStamp
-						dict["coord"]=[indexData.timeStampStr]
-						dict["name"]=indexData.timeStamp
-					}
-					
-					
-					
-					{
-						name : 'XX标点',
-						coord : [ '07-18 15:10:00', 3.8 ],
-						value : 3.8,
-						itemStyle : {
-							normal : {
-								color : 'rgb(41,60,85)'
-							}
+						
+						if(indexData.type == 1){
+							dict["coord"]=[indexData.timeStampStr.substring(5),indexData.buyPrice]
+							dict["value"]=indexData.buyPrice
+							normal["color"]='rgb(50,205,50)'
+						}else if(indexData.type == 0){
+							dict["coord"]=[indexData.timeStampStr.substring(5),indexData.sellPrice]
+							dict["value"]=indexData.sellPrice
 						}
+							
+						itemStyle["normal"]=normal
+						dict["itemStyle"]=itemStyle
+						
+						buySellPoint.push(dict)
 					}
-					
 				}
 			});
 			
@@ -163,7 +165,7 @@ $(function() {
 										}
 									}
 								},
-								data : [{
+								data : [/*{
 									name : 'highest value',
 									type : 'max',
 									valueDim : 'highest'
@@ -175,7 +177,7 @@ $(function() {
 									name : 'average value on close',
 									type : 'average',
 									valueDim : 'close'
-								} ],
+								} */],
 								tooltip : {
 									formatter : function(param) {
 										return param.name + '<br>'
@@ -228,8 +230,8 @@ $(function() {
 				]
 			};
 			
-			for(i=0;i<cc.length;i++){
-				option.series[0].markPoint.data.push(cc[i])
+			for(i=0;i<buySellPoint.length;i++){
+				option.series[0].markPoint.data.push(buySellPoint[i])
 			}
 			
 			myChart.setOption(option);
