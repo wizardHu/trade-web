@@ -15,6 +15,7 @@ function ajaxT() {
 function createShowingTable(data) {
 	
 	var all = "";
+	var accountSum = 0
 	
 	for(index = 0 ; index < data.length; index++) {
 		var tableStr = "<table class='tab-list' width='99%'>";
@@ -58,6 +59,8 @@ function createShowingTable(data) {
 			success : function(data2) {
 				finalProfit = data[index].statisticsModel.expend + data[index].statisticsModel.surplus*data2.result*0.998
 				statisticsModel = statisticsModel + "   presentPrice : "+data2.result + "   finalProfit : "+finalProfit+ "   predictNextBuy : "+data2.result*0.985
+				
+				accountSum = accountSum + data[index].statisticsModel.surplus*data2.result*0.998
 			}
 		});
 			
@@ -71,4 +74,23 @@ function createShowingTable(data) {
 	
 	// 添加到div中
 	$("#tableAjax").html(all);
+	
+	var accountStr = ""
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		async: false,
+		url : "/tradeData/getPresentBlance",
+		data:{"currency":"usdt"},
+		success : function(data) {
+			accountSum = accountSum + parseInt(data.result)
+			
+			orgBlance = 28.2791;
+			
+			accountStr = "orgBalance: "+orgBlance+" balance: "+accountSum+" profit: "+ (accountSum-orgBlance)/orgBlance*100+"%"
+		}
+	});
+	
+	// 添加到div中
+	$("#account").html(accountStr);
 }

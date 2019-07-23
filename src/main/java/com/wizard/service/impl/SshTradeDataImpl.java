@@ -128,7 +128,20 @@ public class SshTradeDataImpl implements ITradeData {
 		return CommonListResult.getSuccResultWithData(list);
 	}
 	
-
+	@Override
+	public CommonResult getPresentBlance(String currency) {
+		String command = "python amplee/presentUsdt.py ";
+		String result = SshUtil.execCommand(command);
+		
+		logger.info("command {} result={}",command,result);
+		
+		if(!StringUtils.isEmpty(result)) {
+			return CommonResult.getSuccResultWithData(result);
+		}
+		
+		return CommonResult.getSuccResult();
+	}
+	
 	/**
 	 * 参数组装
 	 * @author hulujie
@@ -306,4 +319,5 @@ public class SshTradeDataImpl implements ITradeData {
 		
 		return list;
 	}
+	
 }

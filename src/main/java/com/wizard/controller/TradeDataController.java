@@ -51,4 +51,9 @@ public class TradeDataController {
         return sshTradeDataImpl.getRecordDataBySymbol(symbol);
     }
 	
+	@RequestMapping("/getPresentBlance")
+    public CommonResult getPresentBlance(String currency) {
+        return sshTradeDataImpl.getPresentBlance(currency);
+    }
+	
 }

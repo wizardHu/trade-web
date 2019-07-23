@@ -56,4 +56,12 @@ public interface ITradeData {
 	 */
 	CommonListResult<RecordDataModel> getRecordDataBySymbol(String symbol);
 	
+	/**
+	 * 得到余额
+	 * @author hulujie
+	 * @since 2019年7月15日 上午11:05:16
+	 * @param symbol
+	 * @return
+	 */
+	CommonResult getPresentBlance(String symbol);
 }
