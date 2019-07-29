@@ -83,9 +83,20 @@ function createShowingTable(data) {
 		url : "/tradeData/getPresentBlance",
 		data:{"currency":"usdt"},
 		success : function(data) {
-			accountSum = accountSum + parseInt(data.result)
+			accountSum = accountSum + parseFloat(data.result)
 			
 			orgBlance = 36.2991;
+			
+			$.ajax({
+				type : "POST",
+				dataType : "json",
+				async: false,
+				url : "/tradeData/getSellCount",
+				success : function(data) {
+					accountSum = accountSum - parseFloat(data.result)
+				}
+			});
+			
 			
 			accountStr = "orgBalance: "+orgBlance+" balance: "+accountSum+" profit: "+ ((accountSum-orgBlance)/orgBlance*100).toFixed(2)+"%"
 		}

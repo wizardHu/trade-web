@@ -64,4 +64,12 @@ public interface ITradeData {
 	 * @return
 	 */
 	CommonResult getPresentBlance(String symbol);
+
+	/**
+	 * 得到紧急卖出去的量
+	 * @author Administrator
+	 * @since 2019年7月27日 下午12:29:08
+	 * @return
+	 */
+	CommonResult getSellCount();
 }

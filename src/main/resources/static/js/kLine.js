@@ -37,7 +37,7 @@ $(function() {
 	$.ajax({
 		type : "POST",
 		dataType : "json",
-		url : "/tradeData/getKline?symbol=btcusdt&period=1min&size=2000",
+		url : "/tradeData/getKline?symbol=eosusdt&period=1min&size=2000",
 		success : function(data) {
 			var list = []
 			myChart.hideLoading();
@@ -61,7 +61,7 @@ $(function() {
 				async : false,
 				url : "/tradeData/symbolRecordData",
 				data : {
-					"symbol" : "btcusdt"
+					"symbol" : "eosusdt"
 				},
 				success : function(data2) {
 					

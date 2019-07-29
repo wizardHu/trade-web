@@ -56,4 +56,9 @@ public class TradeDataController {
         return sshTradeDataImpl.getPresentBlance(currency);
     }
 	
+	@RequestMapping("/getSellCount")
+    public CommonResult getSellCount() {
+        return sshTradeDataImpl.getSellCount();
+    }
+	
 }

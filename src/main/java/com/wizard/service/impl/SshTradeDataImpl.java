@@ -142,6 +142,20 @@ public class SshTradeDataImpl implements ITradeData {
 		return CommonResult.getSuccResult();
 	}
 	
+	@Override
+	public CommonResult getSellCount() {
+		String command = "myshell/getSellCount.sh ";
+		String result = SshUtil.execCommand(command);
+		
+		logger.info("command {} result={}",command,result);
+		
+		if(!StringUtils.isEmpty(result)) {
+			return CommonResult.getSuccResultWithData(result);
+		}
+		
+		return CommonResult.getSuccResult();
+	}
+	
 	/**
 	 * 参数组装
 	 * @author hulujie
@@ -319,5 +333,4 @@ public class SshTradeDataImpl implements ITradeData {
 		
 		return list;
 	}
-	
 }
