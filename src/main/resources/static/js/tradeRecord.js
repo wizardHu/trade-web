@@ -85,7 +85,7 @@ function createShowingTable(data) {
 		success : function(data) {
 			accountSum = accountSum + parseFloat(data.result)
 			
-			orgBlance = 36.2991;
+			orgBlance = 180.3913;
 			
 			$.ajax({
 				type : "POST",
