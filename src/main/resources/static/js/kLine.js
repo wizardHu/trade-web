@@ -37,7 +37,7 @@ $(function() {
 	$.ajax({
 		type : "POST",
 		dataType : "json",
-		url : "/tradeData/getKline?symbol=eosusdt&period=1min&size=2000",
+		url : "/tradeData/getKline?symbol=eosusdt&period=1min&size=50",
 		success : function(data) {
 			var list = []
 			myChart.hideLoading();
@@ -48,6 +48,8 @@ $(function() {
 				list2.push(parseFloat(data.resultList[i][2]))
 				list2.push(parseFloat(data.resultList[i][3]))
 				list2.push(parseFloat(data.resultList[i][4]))
+				list2.push(Math.random()*1000)
+				list2.push(1)
 				
 				list.push(list2)
 			}
@@ -94,6 +96,7 @@ $(function() {
 			
 
 			option = {
+					
 				title : {
 					text : 'k线',
 					left : 0
@@ -106,13 +109,27 @@ $(function() {
 				},
 				legend : {
 					data : [ '日K', 'MA5', 'MA10', 'MA20', 'MA30' ]
-				},
-				grid : {
-					left : '10%',
-					right : '10%',
-					bottom : '15%'
-				},
-				xAxis : {
+				},toolbox: {
+			        feature: {
+			            dataZoom: {
+			                yAxisIndex: false
+			            },
+			        }
+			    },
+			    grid: [
+			           {
+			               left: '10%',
+			               right: '10%',
+			               bottom: 200
+			           },
+			           {
+			               left: '10%',
+			               right: '10%',
+			               height: 80,
+			               bottom: 80
+			           }
+			       ],
+				xAxis :[ {
 					type : 'category',
 					data : data0.categoryData,
 					scale : true,
@@ -127,12 +144,36 @@ $(function() {
 					min : 'dataMin',
 					max : 'dataMax'
 				},
-				yAxis : {
+				{
+		            type: 'category',
+		            gridIndex: 1,
+		            data : data0.amount,
+		            scale: true,
+		            boundaryGap : false,
+		            axisLine: {onZero: false},
+		            axisTick: {show: false},
+		            splitLine: {show: false},
+		            axisLabel: {show: false},
+		            splitNumber: 20,
+		            min: 'dataMin',
+		            max: 'dataMax'
+		        }],
+				yAxis : [{
 					scale : true,
 					splitArea : {
 						show : true
 					}
 				},
+		        {
+		            scale: true,
+		            gridIndex: 1,
+		            splitNumber: 2,
+		            
+		            axisLabel: {show: false},
+		            axisLine: {show: false},
+		            axisTick: {show: false},
+		            splitLine: {show: false}
+		        }],
 				dataZoom : [ {
 					type : 'inside',
 					start : 50,
@@ -144,6 +185,18 @@ $(function() {
 					start : 50,
 					end : 100
 				} ],
+			    visualMap: {
+			        show: false,
+			        seriesIndex: 1,
+			        dimension: 6,
+			        pieces: [{
+			            value: 1,
+			            color: upColor
+			        }, {
+			            value: -1,
+			            color: downColor
+			        }]
+			    },
 				series : [
 						{
 							name : '日K',
@@ -225,7 +278,7 @@ $(function() {
 									opacity : 0.5
 								}
 							}
-						},
+						} 
 
 				]
 			};
@@ -243,13 +296,16 @@ $(function() {
 function splitData(rawData) {
 	    var categoryData = [];
 	    var values = []
+	    var amount = []
 	    for (var i = 0; i < rawData.length; i++) {
 	        categoryData.push(rawData[i].splice(0, 1)[0]);
 	        values.push(rawData[i])
+	        amount.push(rawData[i][4])
 	    }
 	    return {
 	        categoryData: categoryData,
-	        values: values
+	        values: values,
+	        amount:amount
 	    };
 	}
 
