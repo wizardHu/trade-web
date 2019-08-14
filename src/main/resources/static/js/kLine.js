@@ -22,17 +22,6 @@ myChart.setOption({
 $(function() {
 	
 	
-	cc = [ {
-		name : 'XX标点2',
-		coord : [ '07-17 15:10:00', 3.6 ],
-		value : 3.6,
-		itemStyle : {
-			normal : {
-				color : 'rgb(41,60,85)'
-			}
-		}
-	}]
-	
 	myChart.showLoading();
 	$.ajax({
 		type : "POST",
@@ -49,7 +38,7 @@ $(function() {
 				list2.push(parseFloat(data.resultList[i][3]))
 				list2.push(parseFloat(data.resultList[i][4]))
 				list2.push(Math.random()*1000)
-				list2.push(1)
+				list2.push(Math.random()>0.5?1:-1)
 				
 				list.push(list2)
 			}
@@ -147,7 +136,6 @@ $(function() {
 				{
 		            type: 'category',
 		            gridIndex: 1,
-		            data : data0.amount,
 		            scale: true,
 		            boundaryGap : false,
 		            axisLine: {onZero: false},
@@ -168,7 +156,6 @@ $(function() {
 		            scale: true,
 		            gridIndex: 1,
 		            splitNumber: 2,
-		            
 		            axisLabel: {show: false},
 		            axisLine: {show: false},
 		            axisTick: {show: false},
@@ -176,19 +163,22 @@ $(function() {
 		        }],
 				dataZoom : [ {
 					type : 'inside',
+					xAxisIndex: [0, 1],
 					start : 50,
 					end : 100
-				}, {
-					show : true,
-					type : 'slider',
-					y : '90%',
-					start : 50,
-					end : 100
-				} ],
+				},{
+		            show: true,
+		            xAxisIndex: [0, 1],
+		            type: 'slider',
+		            bottom: 10,
+		            start: 10,
+		            end: 100,
+		            handleSize: '105%'
+		        } ]  ,
 			    visualMap: {
 			        show: false,
 			        seriesIndex: 1,
-			        dimension: 6,
+			        dimension: 2,
 			        pieces: [{
 			            value: 1,
 			            color: upColor
@@ -238,7 +228,29 @@ $(function() {
 									}
 								}
 							}
-						}, {
+						}
+						,
+				        {
+							name: 'Volumn',
+				            type: 'bar',
+				            data : data0.amount,
+				            stack: 'Volumn',
+				            xAxisIndex:1,
+				            yAxisIndex:1,
+				            itemStyle: {
+				                color: '#7fbe9e'
+				            } 
+				        },{
+							name: 'Volumn2',
+				            type: 'bar',
+				            data : data0.amount,
+				            stack: 'Volumn',
+				            xAxisIndex:1,
+				            yAxisIndex:1,
+				            itemStyle: {
+				                color: '#7fbe9e'
+				            } 
+				        }, {
 							name : 'MA5',
 							type : 'line',
 							data : calculateMA(5),
@@ -278,7 +290,7 @@ $(function() {
 									opacity : 0.5
 								}
 							}
-						} 
+						}
 
 				]
 			};
@@ -297,10 +309,12 @@ function splitData(rawData) {
 	    var categoryData = [];
 	    var values = []
 	    var amount = []
+	    var sign = []
 	    for (var i = 0; i < rawData.length; i++) {
-	        categoryData.push(rawData[i].splice(0, 1)[0]);
+	    	var dataIndex = rawData[i].splice(0, 1)[0]
+	        categoryData.push(dataIndex);
 	        values.push(rawData[i])
-	        amount.push(rawData[i][4])
+	        amount.push([dataIndex,rawData[i][4],rawData[i][5]])
 	    }
 	    return {
 	        categoryData: categoryData,
