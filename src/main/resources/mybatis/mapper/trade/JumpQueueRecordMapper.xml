@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wizard.persistence.trade.JumpQueueRecordMapper" >
+
+    <sql id="jumpQueueRecordParams">
+
+        <where>
+
+            <if test="symbol != null and symbol!=''">
+                symbol = #{symbol}
+            </if>
+
+            <if test="orderId != null and orderId!=''">
+                order_id = #{orderId}
+            </if>
+
+            <if test="type != null">
+                type = #{type}
+            </if>
+
+            <if test="id != null">
+                id = #{id}
+            </if>
+
+            <if test="beginCreateTime != null and beginCreateTime != ''" >
+                <![CDATA[
+                 and create_time >= #{beginCreateTime}
+                 ]]>
+            </if>
+            <if test="endCreateTime != null and endCreateTime != ''" >
+                <![CDATA[
+                 and create_time <= #{endCreateTime}
+                ]]>
+            </if>
+
+        </where>
+
+    </sql>
+
+    <sql id="jumpQueueHistoryRecordParams">
+
+        <where>
+
+            <if test="symbol != null and symbol!=''">
+                symbol = #{symbol}
+            </if>
+
+            <if test="orderId != null and orderId!=''">
+                order_id = #{orderId}
+            </if>
+
+            <if test="type != null">
+                type = #{type}
+            </if>
+
+            <if test="id != null">
+                id = #{id}
+            </if>
+
+            <if test="beginCreateTime != null and beginCreateTime != ''" >
+                <![CDATA[
+                 and create_time >= #{beginCreateTime}
+                 ]]>
+            </if>
+            <if test="endCreateTime != null and endCreateTime != ''" >
+                <![CDATA[
+                 and create_time <= #{endCreateTime}
+                ]]>
+            </if>
+
+        </where>
+
+    </sql>
+
+    <select id="getJumpQueueRecord" resultType="com.wizard.model.JumpQueueRecordModel">
+
+        select * from tb_jump_queue_record
+        <include refid="jumpQueueRecordParams"/>
+
+        order by id desc
+
+        <if test="startIndex != null">
+            LIMIT #{startIndex}, #{pageSize}
+        </if>
+
+        <if test="startIndex == null">
+            LIMIT 1
+        </if>
+
+    </select>
+
+    <select id="getJumpQueueRecordCount" resultType="java.lang.Integer">
+        select count(*) from tb_jump_queue_record
+        <include refid="jumpQueueRecordParams"/>
+    </select>
+
+    <select id="getJumpQueueHistoryRecord" resultType="com.wizard.model.JumpQueueHistoryRecordModel">
+
+        select * from tb_jump_queue_history_record
+        <include refid="jumpQueueHistoryRecordParams"/>
+
+        order by id desc
+
+        <if test="startIndex != null">
+            LIMIT #{startIndex}, #{pageSize}
+        </if>
+
+        <if test="startIndex == null">
+            LIMIT 1
+        </if>
+
+    </select>
+
+    <select id="getJumpQueueHistoryRecordCount" resultType="java.lang.Integer">
+        select count(*) from tb_jump_queue_history_record
+        <include refid="jumpQueueHistoryRecordParams"/>
+    </select>
+</mapper>

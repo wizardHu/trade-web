@@ -2,7 +2,98 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wizard.persistence.trade.BuyRecordMapper" >
 
+    <sql id="buyRecordParams">
+
+        <where>
+
+            <if test="symbol != null and symbol!=''">
+                symbol = #{symbol}
+            </if>
+
+            <if test="orderId != null and orderId!=''">
+                order_id = #{orderId}
+            </if>
+
+            <if test="status != null">
+                status = #{status}
+            </if>
+
+        </where>
+
+    </sql>
+
+    <sql id="buySellHistoryRecordParams">
+
+        <where>
+
+            <if test="symbol != null and symbol!=''">
+                symbol = #{symbol}
+            </if>
+
+            <if test="buyOrderId != null and buyOrderId!=''">
+                buy_order_id = #{buyOrderId}
+            </if>
+
+            <if test="sellOrderId != null and sellOrderId!=''">
+                sell_order_id = #{sellOrderId}
+            </if>
+
+            <if test="type != null">
+                type = #{type}
+            </if>
+
+            <if test="beginCreateTime != null and beginCreateTime != ''" >
+                <![CDATA[
+                 and create_time >= #{beginCreateTime}
+                 ]]>
+            </if>
+            <if test="endCreateTime != null and endCreateTime != ''" >
+                <![CDATA[
+                 and create_time <= #{endCreateTime}
+                ]]>
+            </if>
+
+        </where>
+
+    </sql>
+
     <select id="getBuyRecord" resultType="com.wizard.model.BuyRecordModel">
         select * from tb_buy_record
+        <include refid="buyRecordParams"/>
+
+        order by id desc
+
+        <if test="startIndex != null">
+            LIMIT #{startIndex}, #{pageSize}
+        </if>
+
+        <if test="startIndex == null">
+            LIMIT 1
+        </if>
+
+    </select>
+
+    <select id="getBuyRecordCount" resultType="java.lang.Integer">
+        select count(*) from tb_buy_record
+        <include refid="buyRecordParams"/>
+    </select>
+
+    <select id="getBuySellHistoryRecordCount" resultType="java.lang.Integer">
+        select count(*) from tb_buy_sell_history_record
+        <include refid="buySellHistoryRecordParams"/>
+    </select>
+
+    <select id="getBuySellHistoryRecord" resultType="com.wizard.model.BuySellHistoryRecordModel">
+        select * from tb_buy_sell_history_record
+        <include refid="buySellHistoryRecordParams"/>
+        order by id desc
+
+        <if test="startIndex != null">
+            LIMIT #{startIndex}, #{pageSize}
+        </if>
+
+        <if test="startIndex == null">
+            LIMIT 1
+        </if>
     </select>
 </mapper>

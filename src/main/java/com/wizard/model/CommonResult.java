@@ -1,11 +1,20 @@
 package com.wizard.model;
 
+import lombok.Data;
+
+@Data
 public class CommonResult{
 
 	public int code;
 	public boolean isSuccess;
 	public String description;
 	private Object result;
+
+	private int page;
+
+	private int totalCount;
+
+	private int pagesize;
 
 
 	public CommonResult() {
@@ -17,37 +26,6 @@ public class CommonResult{
 		this.isSuccess = true;
 	}
 
-	public Object getResult() {
-		return result;
-	}
-
-	public void setResult(Object result) {
-		this.result = result;
-	}
-
-	public int getCode() {
-		return code;
-	}
-
-	public void setCode(int code) {
-		this.code = code;
-	}
-
-	public boolean isSuccess() {
-		return isSuccess;
-	}
-
-	public void setSuccess(boolean success) {
-		isSuccess = success;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
 	public static CommonResult getSuccResult() {
 		CommonResult result = new CommonResult();
 		result.setSuccess(true);

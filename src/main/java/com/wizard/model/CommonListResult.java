@@ -1,18 +1,15 @@
 package com.wizard.model;
 
+import lombok.Data;
+import lombok.ToString;
+
 import java.util.List;
 
+@Data
+@ToString
 public class CommonListResult<T> extends CommonResult{
 
 	private List<T> resultList;
-
-	public List<T> getResultList() {
-		return resultList;
-	}
-
-	public void setResultList(List<T> resultList) {
-		this.resultList = resultList;
-	}
 
 	public CommonListResult() {
 

@@ -25,7 +25,7 @@ public class BuyRecordModel {
 
 	private Float minIncome;
 
-	private Float last_price;
+	private Float lastPrice;
 
 	private Integer status;
 
