@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wizard.persistence.trade.SellOrderRecordMapper" >
+
+    <sql id="sellOrderRecordParams">
+
+        <where>
+
+            <if test="symbol != null and symbol != ''">
+                and symbol = #{symbol}
+            </if>
+
+            <if test="sellOrderId != null and sellOrderId != ''">
+                and sell_orderId = #{sellOrderId}
+            </if>
+
+            <if test="buyOrderId != null and buyOrderId != ''">
+                and buy_orderId = #{buyOrderId}
+            </if>
+
+
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
+        </where>
+
+    </sql>
+
+    <select id="getSellOrderRecord" resultType="com.wizard.model.SellOrderRecordModel">
+
+        select * from tb_sell_order_record
+        <include refid="sellOrderRecordParams"></include>
+        order by id desc
+
+        <if test="startIndex != null">
+            LIMIT #{startIndex}, #{pageSize}
+        </if>
+
+        <if test="startIndex == null">
+            LIMIT 1
+        </if>
+
+    </select>
+
+    <select id="getSellOrderRecordCount" resultType="java.lang.Integer">
+        select count(*) from tb_sell_order_record
+        <include refid="sellOrderRecordParams"></include>
+    </select>
+
+</mapper>

@@ -19,9 +19,9 @@ public class CommonPaginationQueryBase {
 
     private Integer startIndex;
 
-    public int generateStartIndex(){
+    public Integer generateStartIndex(){
         if(pageSize == null){
-            throw new IllegalArgumentException("pageSize cannot be null!");
+            return null;
         }
         if(page == null){
             page = 1;

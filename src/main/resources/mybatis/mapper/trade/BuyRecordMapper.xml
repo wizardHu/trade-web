@@ -7,15 +7,15 @@
         <where>
 
             <if test="symbol != null and symbol!=''">
-                symbol = #{symbol}
+                and symbol = #{symbol}
             </if>
 
             <if test="orderId != null and orderId!=''">
-                order_id = #{orderId}
+                and   order_id = #{orderId}
             </if>
 
             <if test="status != null">
-                status = #{status}
+                and status = #{status}
             </if>
 
         </where>
@@ -27,19 +27,23 @@
         <where>
 
             <if test="symbol != null and symbol!=''">
-                symbol = #{symbol}
+                and symbol = #{symbol}
             </if>
 
             <if test="buyOrderId != null and buyOrderId!=''">
-                buy_order_id = #{buyOrderId}
+                and buy_order_id = #{buyOrderId}
             </if>
 
             <if test="sellOrderId != null and sellOrderId!=''">
-                sell_order_id = #{sellOrderId}
+                and sell_order_id = #{sellOrderId}
+            </if>
+
+            <if test="orderId != null and orderId!=''">
+                and ( sell_order_id = #{orderId} or  buy_order_id = #{orderId})
             </if>
 
             <if test="type != null">
-                type = #{type}
+                and type = #{type}
             </if>
 
             <if test="beginCreateTime != null and beginCreateTime != ''" >
@@ -92,8 +96,5 @@
             LIMIT #{startIndex}, #{pageSize}
         </if>
 
-        <if test="startIndex == null">
-            LIMIT 1
-        </if>
     </select>
 </mapper>

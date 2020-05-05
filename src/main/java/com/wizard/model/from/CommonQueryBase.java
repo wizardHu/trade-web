@@ -2,7 +2,6 @@ package com.wizard.model.from;
 
 import lombok.Data;
 
-import java.util.Date;
 
 @Data
 public class CommonQueryBase extends CommonPaginationQueryBase{

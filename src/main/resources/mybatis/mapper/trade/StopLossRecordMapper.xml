@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wizard.persistence.trade.StopLossRecordMapper" >
+
+    <sql id="stopLossRecordParams">
+
+        <where>
+
+            <if test="symbol != null and symbol != ''">
+                and  symbol = #{symbol}
+            </if>
+
+            <if test="orderId != null and orderId != ''">
+                and  order_id = #{orderId}
+            </if>
+
+            <if test="oriOrderId != null and oriOrderId != ''">
+                and  ori_order_id = #{oriOrderId}
+            </if>
+
+            <if test="status != null">
+                and status = #{status}
+            </if>
+
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
+        </where>
+
+    </sql>
+
+    <sql id="stopLossHistoryRecordParams">
+
+        <where>
+
+            <if test="symbol != null and symbol!=''">
+                and symbol = #{symbol}
+            </if>
+
+            <if test="orderId != null and orderId != ''">
+                and order_id = #{orderId}
+            </if>
+
+            <if test="oriOrderId != null and oriOrderId != ''">
+                and ori_order_id = #{oriOrderId}
+            </if>
+
+            <if test="type != null">
+                and type = #{type}
+            </if>
+
+            <if test="beginCreateTime != null and beginCreateTime != ''" >
+                <![CDATA[
+                 and create_time >= #{beginCreateTime}
+                 ]]>
+            </if>
+            <if test="endCreateTime != null and endCreateTime != ''" >
+                <![CDATA[
+                 and create_time <= #{endCreateTime}
+                ]]>
+            </if>
+
+        </where>
+
+    </sql>
+    <select id="getStopLossRecord" resultType="com.wizard.model.StopLossRecordModel">
+        select * from tb_stop_loss_record
+        <include refid="stopLossRecordParams"></include>
+        order by id desc
+
+        <if test="startIndex != null">
+            LIMIT #{startIndex}, #{pageSize}
+        </if>
+
+        <if test="startIndex == null">
+            LIMIT 1
+        </if>
+    </select>
+
+    <select id="getStopLossRecordCount" resultType="java.lang.Integer">
+        select count(*) from tb_stop_loss_record
+        <include refid="stopLossRecordParams"></include>
+    </select>
+
+    <select id="getStopLossHistoryRecord" resultType="com.wizard.model.StopLossHistoryRecordModel">
+        select * from tb_stop_loss_history_record
+        <include refid="stopLossHistoryRecordParams"></include>
+        order by id desc
+
+        <if test="startIndex != null">
+            LIMIT #{startIndex}, #{pageSize}
+        </if>
+
+    </select>
+
+    <select id="getStopLossHistoryRecordCount" resultType="java.lang.Integer">
+        select count(*) from tb_stop_loss_history_record
+        <include refid="stopLossHistoryRecordParams"></include>
+    </select>
+
+</mapper>

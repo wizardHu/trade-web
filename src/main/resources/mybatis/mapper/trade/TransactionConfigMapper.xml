@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wizard.persistence.trade.TransactionConfigMapper" >
+
+    <sql id="transactionConfigRecordParams">
+
+        <where>
+
+            <if test="symbol != null and symbol != ''">
+                and symbol = #{symbol}
+            </if>
+
+            <if test="status != null">
+                and status = #{status}
+            </if>
+
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
+        </where>
+
+    </sql>
+
+    <select id="getTransactionConfigRecord" resultType="com.wizard.model.TransactionConfigModel">
+        select * from tb_transaction_config
+        <include refid="transactionConfigRecordParams"></include>
+        order by id desc
+
+        <if test="startIndex != null">
+            LIMIT #{startIndex}, #{pageSize}
+        </if>
+
+        <if test="startIndex == null">
+            LIMIT 1
+        </if>
+    </select>
+
+    <select id="getTransactionConfigRecordCount" resultType="java.lang.Integer">
+        select count(*) from tb_transaction_config
+        <include refid="transactionConfigRecordParams"></include>
+    </select>
+
+</mapper>

@@ -1,12 +1,8 @@
 package com.wizard.amplee;
 
 import com.wizard.model.*;
-import com.wizard.model.from.BuyRecordQuery;
-import com.wizard.model.from.BuySellHistoryRecordQuery;
-import com.wizard.model.from.JumpQueueHistoryRecordQuery;
-import com.wizard.model.from.JumpQueueRecordQuery;
-import com.wizard.service.BuyRecordService;
-import com.wizard.service.JumpQueueRecordService;
+import com.wizard.model.from.*;
+import com.wizard.service.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +22,18 @@ public class AmpleeApplicationTests {
 
 	@Resource
 	private JumpQueueRecordService jumpQueueRecordService;
+
+	@Resource
+	private StopLossRecordService stopLossRecordService;
+
+	@Resource
+	private SellOrderRecordService sellOrderRecordService;
+
+	@Resource
+	private TransactionConfigRecordService transactionConfigRecordService;
+
+	@Resource
+	private OrderDetailService orderDetailService;
 
 	@Test
 	public void getBuyRecord(){
@@ -79,5 +87,61 @@ public class AmpleeApplicationTests {
 		System.out.println(result);
 	}
 
+	@Test
+	public void getStopLossRecordList(){
+
+		StopLossRecordQuery query = new StopLossRecordQuery();
+		query.setPage(1);
+		query.setPageSize(100);
+		query.setSymbol("btcusdt");
+
+		CommonListResult<StopLossRecordModel> result = stopLossRecordService.getStopLossRecordList(query);
+
+		System.out.println(result);
+	}
+
+
+	@Test
+	public void getStopLossHistoryRecordList(){
+
+		StopLossHistoryRecordQuery query = new StopLossHistoryRecordQuery();
+		query.setPage(1);
+		query.setPageSize(100);
+		query.setSymbol("btcusdt");
+
+		CommonListResult<StopLossHistoryRecordModel> result = stopLossRecordService.getStopLossHistoryRecordList(query);
+
+		System.out.println(result);
+	}
+
+	@Test
+	public void getSellOrderRecordList(){
+
+		SellOrderRecordQuery query = new SellOrderRecordQuery();
+		query.setPage(1);
+		query.setPageSize(100);
+		query.setSymbol("btcusdt");
+
+		CommonListResult<SellOrderRecordModel> result = sellOrderRecordService.getSellOrderRecordList(query);
+
+		System.out.println(result);
+	}
+
+	@Test
+	public void getTransactionConfigRecordList(){
+
+		TransactionConfigQuery query = new TransactionConfigQuery();
+
+		CommonListResult<TransactionConfigModel> result = transactionConfigRecordService.getTransactionConfigRecordList(query);
+
+		System.out.println(result);
+	}
+
+	@Test
+	public void getOrderDetailModels(){
+		CommonListResult<OrderDetailModel> result = orderDetailService.getOrderDetailModels("69289411629437610");
+
+		System.out.println(result);
+	}
 
 }

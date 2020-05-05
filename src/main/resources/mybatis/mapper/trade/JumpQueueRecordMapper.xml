@@ -7,19 +7,19 @@
         <where>
 
             <if test="symbol != null and symbol!=''">
-                symbol = #{symbol}
+                and  symbol = #{symbol}
             </if>
 
             <if test="orderId != null and orderId!=''">
-                order_id = #{orderId}
+                and  order_id = #{orderId}
             </if>
 
             <if test="type != null">
-                type = #{type}
+                and  type = #{type}
             </if>
 
             <if test="id != null">
-                id = #{id}
+                and  id = #{id}
             </if>
 
             <if test="beginCreateTime != null and beginCreateTime != ''" >
@@ -42,19 +42,19 @@
         <where>
 
             <if test="symbol != null and symbol!=''">
-                symbol = #{symbol}
+                and  symbol = #{symbol}
             </if>
 
             <if test="orderId != null and orderId!=''">
-                order_id = #{orderId}
+                and  order_id = #{orderId}
             </if>
 
             <if test="type != null">
-                type = #{type}
+                and  type = #{type}
             </if>
 
             <if test="id != null">
-                id = #{id}
+                and  id = #{id}
             </if>
 
             <if test="beginCreateTime != null and beginCreateTime != ''" >

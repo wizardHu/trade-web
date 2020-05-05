@@ -5,16 +5,16 @@ import lombok.Data;
 @Data
 public class CommonResult{
 
-	public int code;
+	public Integer code;
 	public boolean isSuccess;
 	public String description;
 	private Object result;
 
-	private int page;
+	private Integer page;
 
-	private int totalCount;
+	private Integer totalCount;
 
-	private int pagesize;
+	private Integer pagesize;
 
 
 	public CommonResult() {
