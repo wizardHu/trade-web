@@ -1,9 +1,15 @@
 package com.wizard.controller;
 
+import com.wizard.model.BuyRecordModel;
+import com.wizard.model.CommonListResult;
+import com.wizard.model.from.BuyRecordQuery;
+import com.wizard.service.BuyRecordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 @RequestMapping("/tradeData")
 @RestController
@@ -11,13 +17,13 @@ public class TradeDataController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-//	@Resource
-//	private ITradeData sshTradeDataImpl;
-//
-//	@RequestMapping("/buyData")
-//    public CommonMapResult<String,List<BuyRecordModel>> getBuyData() {
-//        return sshTradeDataImpl.getBuyDataModels();
-//    }
+	@Resource
+	private BuyRecordService buyRecordService;
+
+	@RequestMapping("/buyData")
+    public CommonListResult<BuyRecordModel> getBuyData() {
+        return buyRecordService.getBuyRecordList(new BuyRecordQuery());
+    }
 //
 //	@RequestMapping("/recordData")
 //    public CommonListResult<RecordAndStatisticsModel> getRecordData() {
@@ -48,5 +54,5 @@ public class TradeDataController {
 //    public CommonResult getSellCount() {
 //        return sshTradeDataImpl.getSellCount();
 //    }
-//
+
 }
