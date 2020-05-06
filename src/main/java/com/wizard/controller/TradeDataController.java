@@ -21,8 +21,8 @@ public class TradeDataController {
 	private BuyRecordService buyRecordService;
 
 	@RequestMapping("/buyData")
-    public CommonListResult<BuyRecordModel> getBuyData() {
-        return buyRecordService.getBuyRecordList(new BuyRecordQuery());
+    public CommonListResult<BuyRecordModel> getBuyData(BuyRecordQuery query) {
+        return buyRecordService.getBuyRecordList(query);
     }
 //
 //	@RequestMapping("/recordData")

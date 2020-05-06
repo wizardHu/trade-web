@@ -33,6 +33,7 @@ public class CommonListResult<T> extends CommonResult{
 	public static <T> CommonListResult<T> getSuccListResult() {
 		CommonListResult<T> result = new CommonListResult<T>();
 		result.setSuccess(true);
+        result.setCode(0);
 		return result;
 	}
 
@@ -40,6 +41,7 @@ public class CommonListResult<T> extends CommonResult{
 		CommonListResult<T> result = new CommonListResult<T>();
 		result.setSuccess(true);
 		result.setResultList(resultList);
+        result.setCode(0);
 		return result;
 	}
 
