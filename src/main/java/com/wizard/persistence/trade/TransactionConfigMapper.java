@@ -2,6 +2,7 @@ package com.wizard.persistence.trade;
 
 import com.wizard.model.TransactionConfigModel;
 import com.wizard.model.from.TransactionConfigQuery;
+import com.wizard.model.from.TransactionConfigUpdate;
 
 import java.util.List;
 
@@ -11,4 +12,5 @@ public interface TransactionConfigMapper {
 
     int getTransactionConfigRecordCount(TransactionConfigQuery query);
 
+    int modTransactionConfigModel(TransactionConfigUpdate transactionConfigUpdate);
 }

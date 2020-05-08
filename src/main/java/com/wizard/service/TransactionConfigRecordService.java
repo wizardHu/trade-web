@@ -1,12 +1,17 @@
 package com.wizard.service;
 
 import com.wizard.model.CommonListResult;
+import com.wizard.model.CommonResult;
 import com.wizard.model.TransactionConfigModel;
 import com.wizard.model.from.TransactionConfigQuery;
+import com.wizard.model.from.TransactionConfigUpdate;
 import com.wizard.persistence.trade.TransactionConfigMapper;
+import com.wizard.util.DateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -14,6 +19,8 @@ public class TransactionConfigRecordService {
 
     @Resource
     private TransactionConfigMapper transactionConfigMapper;
+
+    private long lastTime = 0;
 
     public CommonListResult<TransactionConfigModel> getTransactionConfigRecordList(TransactionConfigQuery query){
 
@@ -29,5 +36,49 @@ public class TransactionConfigRecordService {
         result.setPagesize(query.getPageSize());
         result.setTotalCount(count);
         return result;
+    }
+
+    /**
+     * 修改
+     * @param transactionConfigUpdate
+     * @return
+     */
+    public CommonResult modTransactionConfigModel(TransactionConfigUpdate transactionConfigUpdate){
+
+        String pwd = getNewPwd();
+
+        if(System.currentTimeMillis() - lastTime < 30*1000){
+            return CommonResult.getFailResult("等会再试");
+        }
+
+        if(!pwd.equals(transactionConfigUpdate.getPassWord())){
+            lastTime = System.currentTimeMillis();
+            return CommonResult.getFailResult("密码错误");
+        }
+
+        int modCount = transactionConfigMapper.modTransactionConfigModel(transactionConfigUpdate);
+
+        if(modCount > 0){
+            return CommonResult.getSuccResult();
+        }
+
+        return CommonResult.getFailResult("稍后再试");
+    }
+
+
+    private String getNewPwd(){
+
+        String pwd = DateUtils.dateToString(new Date(),"yyyyMMddmm");
+
+        Calendar cal=Calendar.getInstance();
+        int d = cal.get(Calendar.DATE);
+
+        if(d % 2 == 0){
+            pwd += "amplee";
+        }else {
+            pwd += "wizard";
+        }
+
+        return pwd;
     }
 }

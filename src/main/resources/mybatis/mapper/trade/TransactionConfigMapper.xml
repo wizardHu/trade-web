@@ -41,4 +41,42 @@
         <include refid="transactionConfigRecordParams"></include>
     </select>
 
+    <update id="modTransactionConfigModel">
+
+        update tb_transaction_config
+        <set>
+            <if test="everyExpense != null">
+                every_expense = #{everyExpense},
+            </if>
+
+            <if test="tradeGap != null">
+                trade_gap = #{tradeGap},
+            </if>
+
+            <if test="minIncome != null">
+                min_income = #{minIncome},
+            </if>
+
+            <if test="precision != null">
+                precision = #{precision},
+            </if>
+
+            <if test="status != null">
+                status = #{status},
+            </if>
+
+            <if test="stopLoss != null">
+                stopLoss = #{stopLoss},
+            </if>
+
+            <if test="period != null and period!= ''">
+                period = #{period},
+            </if>
+        </set>
+
+        where id=#{id}
+
+    </update>
+
+
 </mapper>

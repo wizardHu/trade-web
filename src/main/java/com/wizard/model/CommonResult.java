@@ -32,6 +32,13 @@ public class CommonResult{
 		return result;
 	}
 
+	public static CommonResult getFailResult(String description) {
+		CommonResult result = new CommonResult();
+		result.setSuccess(false);
+		result.setDescription(description);
+		return result;
+	}
+
 	public static CommonResult getSuccResultWithData(Object data) {
 		CommonResult result = new CommonResult();
 		result.setSuccess(true);

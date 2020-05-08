@@ -144,4 +144,18 @@ public class AmpleeApplicationTests {
 		System.out.println(result);
 	}
 
+	@Test
+	public void modTransactionConfigModel(){
+
+		TransactionConfigUpdate transactionConfigUpdate = new TransactionConfigUpdate();
+		transactionConfigUpdate.setId(5);
+		transactionConfigUpdate.setEveryExpense(10.3f);
+		transactionConfigUpdate.setStatus(0);
+		transactionConfigUpdate.setPassWord("20200508440amplee");
+
+		CommonResult result = transactionConfigRecordService.modTransactionConfigModel(transactionConfigUpdate);
+
+		System.out.println(result);
+	}
+
 }
