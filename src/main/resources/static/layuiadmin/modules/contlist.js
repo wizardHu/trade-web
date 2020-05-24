@@ -5,35 +5,57 @@
         , n = layui.form;
     i.render({
         elem: "#LAY-app-content-list",
-        url: layui.setter.base + "json/content/list.js",
+        url:  "/tradeData/buyData",
         cols: [[{
             type: "checkbox",
             fixed: "left"
         }, {
             field: "id",
-            width: 100,
-            title: "文章ID",
+            title: "id",
             sort: !0
         }, {
-            field: "label",
-            title: "文章标签",
-            minWidth: 100
+            field: "symbol",
+            title: "交易对",
+            minWidth: 80
         }, {
-            field: "title",
-            title: "文章标题"
+            field: "price",
+            title: "当前价格",
+            width: 100
         }, {
-            field: "author",
-            title: "作者"
+            field: "oriPrice",
+            title: "原始价格",
+            width: 100
+
         }, {
-            field: "uploadtime",
-            title: "上传时间",
-            sort: !0
+            field: "buyIndex",
+            title: "交易时间",
+            sort: !0,
+            width: 100
+        }, {
+            field: "amount",
+            title: "交易数量",
+            minWidth: 100,
+            align: "center"
+        }, {
+            field: "lastPrice",
+            title: "近一次交易价格",
+            width: 100
         }, {
             field: "status",
-            title: "发布状态",
-            templet: "#buttonTpl",
-            minWidth: 80,
-            align: "center"
+            title: "状态",
+            width: 100
+        }, {
+            field: "updateTime",
+            title: "更新时间",
+            width: 100
+        }, {
+            field: "orderId",
+            title: "订单id",
+            width: 180
+        }, {
+            field: "minIncome",
+            title: "最低收入",
+            width: 100
         }, {
             title: "操作",
             minWidth: 150,
@@ -41,10 +63,24 @@
             fixed: "right",
             toolbar: "#table-content-list"
         }]],
-        page: !0,
-        limit: 10,
+        page: true,
         limits: [10, 15, 20, 25, 30],
-        text: "对不起，加载出现异常！"
+        text: "对不起，加载出现异常！",
+        parseData: function(res){ //res 即为原始返回的数据
+            for(var i=0;i<res.resultList.length;i++){
+                var status = res.resultList[i].status
+                if(status == 0) res.resultList[i].status = "正常"
+            }
+
+            return {
+                "code": res.code, //解析接口状态
+                "msg": res.description, //解析提示文本
+                "count": res.totalCount, //解析数据长度
+                "data": res.resultList //解析数据列表
+            };
+        } ,request: {
+            limitName: 'pageSize' //每页数据量的参数名，默认：limit
+        }
     }),
         i.on("tool(LAY-app-content-list)", function(t) {
             var e = t.data;
