@@ -43,7 +43,8 @@
         }, {
             field: "status",
             title: "状态",
-            width: 100
+            width: 100,
+            templet: "#statusTpl"
         }, {
             field: "updateTime",
             title: "更新时间",
@@ -69,7 +70,7 @@
         parseData: function(res){ //res 即为原始返回的数据
             for(var i=0;i<res.resultList.length;i++){
                 var status = res.resultList[i].status
-                if(status == 0) res.resultList[i].status = "正常"
+
             }
 
             return {
