@@ -2,6 +2,7 @@ package com.wizard.service;
 
 import com.wizard.model.CommonListResult;
 import com.wizard.model.CommonResult;
+import com.wizard.model.SelectData;
 import com.wizard.model.TransactionConfigModel;
 import com.wizard.model.from.TransactionConfigQuery;
 import com.wizard.model.from.TransactionConfigUpdate;
@@ -10,6 +11,7 @@ import com.wizard.util.DateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +67,36 @@ public class TransactionConfigRecordService {
         return CommonResult.getFailResult("稍后再试");
     }
 
+    /**
+     * 获取下拉框
+     * @return
+     */
+    public CommonListResult<SelectData> getSymbolSelectDate() {
+
+        CommonListResult<SelectData> result = CommonListResult.getSuccListResult();
+        List<SelectData> selectDataList = new ArrayList<SelectData>();
+
+        TransactionConfigQuery query = new TransactionConfigQuery();
+        query.setPage(1);
+        query.setPageSize(100);
+
+        query.generateStartIndex();
+
+        List<TransactionConfigModel> list = transactionConfigMapper.getTransactionConfigRecord(query);
+
+        for (TransactionConfigModel transactionConfigModel : list) {
+
+            SelectData selectData = new SelectData();
+            selectData.setId(transactionConfigModel.getId()+"");
+            selectData.setValue(transactionConfigModel.getSymbol());
+
+            selectDataList.add(selectData);
+        }
+
+        result.setResultList(selectDataList);
+        return result;
+    }
+
 
     private String getNewPwd(){
 
@@ -81,4 +113,5 @@ public class TransactionConfigRecordService {
 
         return pwd;
     }
+
 }

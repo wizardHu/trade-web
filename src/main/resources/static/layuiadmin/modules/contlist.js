@@ -3,6 +3,7 @@
     var e = layui.$
         , i = layui.table
         , n = layui.form;
+
     i.render({
         elem: "#LAY-app-content-list",
         url:  "/tradeData/buyData",
@@ -30,7 +31,7 @@
             field: "buyIndex",
             title: "交易时间",
             sort: !0,
-            width: 100
+            width: 150
         }, {
             field: "amount",
             title: "交易数量",
@@ -48,7 +49,7 @@
         }, {
             field: "updateTime",
             title: "更新时间",
-            width: 100
+            width: 180
         }, {
             field: "orderId",
             title: "订单id",
@@ -69,8 +70,13 @@
         text: "对不起，加载出现异常！",
         parseData: function(res){ //res 即为原始返回的数据
             for(var i=0;i<res.resultList.length;i++){
-                var status = res.resultList[i].status
-
+                var buyIndex = res.resultList[i].buyIndex
+                res.resultList[i].buyIndex = formatDate(new Date(buyIndex*1000))
+                if(res.resultList[i].updateTime == null){
+                    res.resultList[i].updateTime =""
+                }else{
+                    res.resultList[i].updateTime = renderTime(res.resultList[i].updateTime)
+                }
             }
 
             return {
@@ -230,3 +236,18 @@
         }),
         t("contlist", {})
 });
+
+function formatDate(now) {
+    var year=now.getFullYear();
+    var month=now.getMonth()+1;
+    var date=now.getDate();
+    var hour=now.getHours();
+    var minute=now.getMinutes();
+    var second=now.getSeconds();
+    return year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second;
+}
+
+function renderTime(date) {
+    var dateee = new Date(date).toJSON();
+    return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+}

@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/modules/laydate/default/laydate.css" media="all">
 </head>
 <body>
 
@@ -18,36 +19,42 @@
         <div class="layui-form layui-card-header layuiadmin-card-header-auto">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">文章ID</label>
+                    <label class="layui-form-label">订单Id</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                        <input type="text" name="orderId" placeholder="请输入" autocomplete="off" class="layui-input">
                     </div>
                 </div>
+
                 <div class="layui-inline">
-                    <label class="layui-form-label">作者</label>
+                    <label class="layui-form-label">交易时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="author" placeholder="请输入" autocomplete="off" class="layui-input">
+                        <input type="text" class="layui-input" id="test-laydate-range-datetime" placeholder="yyyy-MM-dd HH:mm:ss" lay-key="7">
                     </div>
                 </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">标题</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
-                    </div>
+
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">文章标签</label>
+                    <label class="layui-form-label">交易对</label>
                     <div class="layui-input-inline">
-                        <select name="label">
-                            <option value="">请选择标签</option>
-                            <option value="0">美食</option>
-                            <option value="1">新闻</option>
-                            <option value="2">八卦</option>
-                            <option value="3">体育</option>
-                            <option value="4">音乐</option>
+                        <select id="symbolSelect" name="label">
+                            <option value="">请选择</option>
                         </select>
                     </div>
                 </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-inline">
+                        <select id="statusSelect" name="label">
+                            <option value="">请选择</option>
+                            <option value="1">正常</option>
+                            <option value="2">止损</option>
+                            <option value="3">等待买</option>
+                            <option value="4">等待卖</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="layui-inline">
                     <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-search">
                         <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
@@ -64,15 +71,15 @@
             <script type="text/html" id="statusTpl">
 
                 {{#  if(d.status == 0){ }}
-                正常
+                <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
                 {{#  } else if(d.status == 1) { }}
-                止损
+                <button class="layui-btn layui-btn-danger layui-btn-xs">止损</button>
                 {{#  } else if(d.status == 2) { }}
-                等待买
+                <button class="layui-btn layui-btn-normal layui-btn-xs">等待买</button>
                 {{#  } else if(d.status == 3) { }}
-                等待卖
+                <button class="layui-btn layui-btn-normal layui-btn-xs">等待卖</button>
                 {{#  } else if(d.status == 4) { }}
-                挂单
+                <button class="layui-btn layui-btn-xs">挂单</button>
                 {{#  } }}
 
             </script>
@@ -86,9 +93,31 @@
         base: '../../../layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'contlist', 'table'], function(){
+    }).use(['index', 'contlist', 'table',"laydate"], function(){
         var table = layui.table
             ,form = layui.form;
+        var laydate = layui.laydate;
+
+        //日期时间选择器
+        laydate.render({
+            elem: '#test-laydate-range-datetime'
+            ,type: 'datetime'
+            ,range: true
+        });
+
+        var form = layui.form;
+
+        layui.$.ajax({
+            url: '/transactionConfig/getSymbolSelectDate',
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                $.each(data.resultList, function (index, item) {
+                    $('#symbolSelect').append(new Option(item.value, item.id));// 下拉菜单里添加元素
+                });
+                layui.form.render("select");
+            }
+        })
 
         //监听搜索
         form.on('submit(LAY-app-contlist-search)', function(data){
