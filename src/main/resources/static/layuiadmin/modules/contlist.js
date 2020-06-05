@@ -120,59 +120,83 @@
             })
         }),
         i.render({
-            elem: "#LAY-app-content-tags",
-            url: layui.setter.base + "json/content/tags.js",
+            elem: "#LAY-app-buy-sell-history-record-list",
+            url:  "/tradeData/buySellHistoryData",
             cols: [[{
-                type: "numbers",
-                fixed: "left"
+                field: "symbol",
+                title: "交易对",
+                width: 100
             }, {
-                field: "id",
+                field: "type",
                 width: 100,
-                title: "ID",
-                sort: !0
+                title: "类型",
+                templet: "#typeTpl"
             }, {
-                field: "tags",
-                title: "分类名",
-                minWidth: 100
+                field: "buyPrice",
+                title: "买入价格",
+                width: 100
             }, {
-                title: "操作",
-                width: 150,
-                align: "center",
-                fixed: "right",
-                toolbar: "#layuiadmin-app-cont-tagsbar"
+                field: "sellPrice",
+                title: "卖出价格",
+                width: 100
+            }, {
+                field: "amount",
+                title: "数量",
+                width: 110
+            }, {
+                field: "profit",
+                title: "收益",
+                width: 110,
+                templet: "#profitTpl"
+            }, {
+                field: "profitPercentage",
+                title: "收益百分比",
+                width: 110,
+                templet: "#profitPreTpl"
+            }, {
+                field: "buyOrderId",
+                title: "买订单号",
+                width: 200
+            }, {
+                field: "sellOrderId",
+                title: "卖订单号",
+                width: 200
+            }, {
+                field: "createTime",
+                title: "创建时间",
+                width: 200
             }]],
-            text: "对不起，加载出现异常！"
-        }),
-        i.on("tool(LAY-app-content-tags)", function(t) {
-            var i = t.data;
-            if ("del" === t.event)
-                layer.confirm("确定删除此分类？", function(e) {
-                    t.del(),
-                        layer.close(e)
-                });
-            else if ("edit" === t.event) {
-                e(t.tr);
-                layer.open({
-                    type: 2,
-                    title: "编辑分类",
-                    content: "../../../views/app/content/tagsform.html?id=" + i.id,
-                    area: ["450px", "200px"],
-                    btn: ["确定", "取消"],
-                    yes: function(e, i) {
-                        var n = i.find("iframe").contents().find("#layuiadmin-app-form-tags")
-                            , l = n.find('input[name="tags"]').val();
-                        l.replace(/\s/g, "") && (t.update({
-                            tags: l
-                        }),
-                            layer.close(e))
-                    },
-                    success: function(t, e) {
-                        var n = t.find("iframe").contents().find("#layuiadmin-app-form-tags").click();
-                        n.find('input[name="tags"]').val(i.tags)
+            page: true,
+            text: "对不起，加载出现异常！",
+            parseData: function(res){ //res 即为原始返回的数据
+                for(var i=0;i<res.resultList.length;i++){
+                    res.resultList[i].createTime = renderTime(res.resultList[i].createTime)
+                    if(res.resultList[i].sellPrice == 0){
+                        res.resultList[i].sellPrice = "-"
                     }
-                })
+                    if(res.resultList[i].sellOrderId == 0){
+                        res.resultList[i].sellOrderId = "-"
+                    }
+                    if(!res.resultList[i].profit){
+                        res.resultList[i].profit = "-"
+                        res.resultList[i].profitPercentage = "-"
+                    }else {
+                        res.resultList[i].profitPercentage = res.resultList[i].profitPercentage+"%"
+                    }
+
+                }
+
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.description, //解析提示文本
+                    "count": res.totalCount, //解析数据长度
+                    "data": res.resultList //解析数据列表
+                };
+            } ,request: {
+                limitName: 'pageSize' //每页数据量的参数名，默认：limit
             }
         }),
+
         i.render({
             elem: "#LAY-app-content-comm",
             url: layui.setter.base + "json/content/comment.js",
@@ -207,7 +231,28 @@
             page: !0,
             limit: 10,
             limits: [10, 15, 20, 25, 30],
-            text: "对不起，加载出现异常！"
+            limits: [10, 15, 20, 25, 30],
+            text: "对不起，加载出现异常！",
+            parseData: function(res){ //res 即为原始返回的数据
+                for(var i=0;i<res.resultList.length;i++){
+                    var buyIndex = res.resultList[i].buyIndex
+                    res.resultList[i].buyIndex = formatDate(new Date(buyIndex*1000))
+                    if(res.resultList[i].updateTime == null){
+                        res.resultList[i].updateTime =""
+                    }else{
+                        res.resultList[i].updateTime = renderTime(res.resultList[i].updateTime)
+                    }
+                }
+
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.description, //解析提示文本
+                    "count": res.totalCount, //解析数据长度
+                    "data": res.resultList //解析数据列表
+                };
+            } ,request: {
+                limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
         }),
         i.on("tool(LAY-app-content-comm)", function(t) {
             t.data;

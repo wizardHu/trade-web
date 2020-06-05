@@ -1,11 +1,12 @@
 package com.wizard.controller;
 
 import com.wizard.model.BuyRecordModel;
+import com.wizard.model.BuySellHistoryRecordModel;
 import com.wizard.model.CommonListResult;
 import com.wizard.model.from.BuyRecordQuery;
+import com.wizard.model.from.BuySellHistoryRecordQuery;
 import com.wizard.service.BuyRecordService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,17 +14,23 @@ import javax.annotation.Resource;
 
 @RequestMapping("/tradeData")
 @RestController
+@Slf4j
 public class TradeDataController {
-
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Resource
 	private BuyRecordService buyRecordService;
 
 	@RequestMapping("/buyData")
-    public CommonListResult<BuyRecordModel> getBuyData(BuyRecordQuery query) {
-        return buyRecordService.getBuyRecordList(query);
-    }
+	public CommonListResult<BuyRecordModel> getBuyData(BuyRecordQuery query) {
+		log.info("getBuyData req={}",query);
+		return buyRecordService.getBuyRecordList(query);
+	}
+
+	@RequestMapping("/buySellHistoryData")
+	public CommonListResult<BuySellHistoryRecordModel> getBuySellHistoryData(BuySellHistoryRecordQuery query) {
+		log.info("getSellHistoryData req={}",query);
+		return buyRecordService.getBuySellHistoryRecordList(query);
+	}
 //
 //	@RequestMapping("/recordData")
 //    public CommonListResult<RecordAndStatisticsModel> getRecordData() {

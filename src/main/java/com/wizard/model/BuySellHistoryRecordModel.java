@@ -19,6 +19,10 @@ public class BuySellHistoryRecordModel {
 
 	private Float sellPrice;
 
+	private Float profit;
+
+	private Float profitPercentage;
+
 	private String buyOrderId;
 
 	private String sellOrderId;

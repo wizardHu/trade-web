@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="6 seconds">
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+    <!-- 项目名称 -->
+    <springProperty scope="context" name="springProjectName" source="spring.project.name" defaultValue="amplee" />
+    <!-- 模块名称 -->
+    <springProperty scope="context" name="springAppName" source="spring.application.name" />
+
+    <springProperty scope="context" name="port" source="port" />
+
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %marker  ${springAppName:-} [thread:%thread,pid:${PID:-}] [%X{MDCId}] %logger{100} --- %msg%n" />
+
+    <property name="LOG_PATH" value="/data/log/zbase-cloud" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <appender name="ROLLFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${springAppName}-${port}.log</file>
+
+        <!-- 按天与日志大小滚动日志 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_PATH}/gzip/${springAppName}-${port}.%d{yyyy-MM-dd,Asia/Hong_Kong}.%i.gz
+            </fileNamePattern>
+            <!-- each file should be at most 100MB, keep 30 days worth of history, but at most 20GB -->
+            <maxFileSize>1GB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <!--日志存储最大空间 -->
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 异步输出 -->
+    <appender name ="ASYNC" class= "ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold >0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>512</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref ="ROLLFILE"/>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="ASYNC" />
+        <springProfile name="dev,test,test-overseas">
+            <appender-ref ref="STDOUT" />
+        </springProfile>
+    </root>
+</configuration>
