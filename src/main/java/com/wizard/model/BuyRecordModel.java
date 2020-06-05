@@ -31,5 +31,7 @@ public class BuyRecordModel {
 
 	private Date updateTime;
 
+	private Date createTime;
+
 
 }

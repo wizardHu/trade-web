@@ -1,21 +1,15 @@
 package com.wizard.util;
 
+import com.wizard.model.TimeBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+
 import java.lang.ref.SoftReference;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import java.util.*;
 
 public class DateUtils   {
 
@@ -436,6 +430,22 @@ public class DateUtils   {
             return null;
         }
 
+    }
+
+    public static TimeBean splitTime(String time){
+
+        if(!StringUtils.isEmpty(time)){
+
+            String timeSz[] = time.split(" - ");
+            if(timeSz.length==2){
+                String begin = timeSz[0].trim();
+                String end = timeSz[1].trim();
+
+                return new TimeBean(begin,end);
+            }
+        }
+
+        return null;
     }
 
 }

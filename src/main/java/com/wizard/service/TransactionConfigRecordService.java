@@ -87,7 +87,7 @@ public class TransactionConfigRecordService {
         for (TransactionConfigModel transactionConfigModel : list) {
 
             SelectData selectData = new SelectData();
-            selectData.setId(transactionConfigModel.getId()+"");
+            selectData.setId(transactionConfigModel.getSymbol());
             selectData.setValue(transactionConfigModel.getSymbol());
 
             selectDataList.add(selectData);

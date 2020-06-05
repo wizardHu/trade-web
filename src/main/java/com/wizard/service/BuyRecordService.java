@@ -3,9 +3,11 @@ package com.wizard.service;
 import com.wizard.model.BuyRecordModel;
 import com.wizard.model.BuySellHistoryRecordModel;
 import com.wizard.model.CommonListResult;
+import com.wizard.model.TimeBean;
 import com.wizard.model.from.BuyRecordQuery;
 import com.wizard.model.from.BuySellHistoryRecordQuery;
 import com.wizard.persistence.trade.BuyRecordMapper;
+import com.wizard.util.DateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,8 +22,19 @@ public class BuyRecordService {
     public CommonListResult<BuyRecordModel> getBuyRecordList(BuyRecordQuery query){
 
         CommonListResult<BuyRecordModel> result = CommonListResult.getSuccListResult();
-
         query.generateStartIndex();
+
+        TimeBean updateTime = DateUtils.splitTime(query.getUpdateTime());
+        if(updateTime != null){
+            query.setBeginUpdateTime(updateTime.getBegin());
+            query.setEndUpdateTime(updateTime.getEnd());
+        }
+
+        TimeBean createTime = DateUtils.splitTime(query.getCreateTime());
+        if(createTime != null){
+            query.setBeginCreateTime(createTime.getBegin());
+            query.setEndCreateTime(createTime.getEnd());
+        }
 
         List<BuyRecordModel> list = buyRecordMapper.getBuyRecord(query);
         int count = buyRecordMapper.getBuyRecordCount(query);
@@ -32,6 +45,7 @@ public class BuyRecordService {
         result.setTotalCount(count);
         return result;
     }
+
 
     public CommonListResult<BuySellHistoryRecordModel> getBuySellHistoryRecordList(BuySellHistoryRecordQuery query){
 

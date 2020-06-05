@@ -14,5 +14,7 @@ public class CommonQueryBase extends CommonPaginationQueryBase{
 
     private String endCreateTime;
 
+    private String createTime;
+
     private String orderId;
 }

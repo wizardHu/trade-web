@@ -28,10 +28,10 @@
             width: 100
 
         }, {
-            field: "buyIndex",
+            field: "createTime",
             title: "交易时间",
             sort: !0,
-            width: 150
+            width: 180
         }, {
             field: "amount",
             title: "交易数量",
@@ -70,8 +70,8 @@
         text: "对不起，加载出现异常！",
         parseData: function(res){ //res 即为原始返回的数据
             for(var i=0;i<res.resultList.length;i++){
-                var buyIndex = res.resultList[i].buyIndex
-                res.resultList[i].buyIndex = formatDate(new Date(buyIndex*1000))
+
+                res.resultList[i].createTime = renderTime(res.resultList[i].createTime)
                 if(res.resultList[i].updateTime == null){
                     res.resultList[i].updateTime =""
                 }else{

@@ -18,6 +18,28 @@
                 and status = #{status}
             </if>
 
+            <if test="beginCreateTime != null and beginCreateTime != ''" >
+                <![CDATA[
+                 and create_time >= #{beginCreateTime}
+                 ]]>
+            </if>
+            <if test="endCreateTime != null and endCreateTime != ''" >
+                <![CDATA[
+                 and create_time <= #{endCreateTime}
+                ]]>
+            </if>
+
+            <if test="beginUpdateTime != null and beginUpdateTime != ''" >
+                <![CDATA[
+                 and update_time >= #{beginUpdateTime}
+                 ]]>
+            </if>
+            <if test="endUpdateTime != null and endUpdateTime != ''" >
+                <![CDATA[
+                 and update_time <= #{endUpdateTime}
+                ]]>
+            </if>
+
         </where>
 
     </sql>
