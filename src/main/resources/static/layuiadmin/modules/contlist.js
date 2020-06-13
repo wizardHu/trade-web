@@ -53,7 +53,8 @@
         }, {
             field: "orderId",
             title: "订单id",
-            width: 180
+            width: 180,
+            templet: "#orderIdTpl"
         }, {
             field: "minIncome",
             title: "最低收入",
@@ -156,11 +157,13 @@
             }, {
                 field: "buyOrderId",
                 title: "买订单号",
-                width: 200
+                width: 200,
+                templet: "#buyOrderIdTpl"
             }, {
                 field: "sellOrderId",
                 title: "卖订单号",
-                width: 200
+                width: 200,
+                templet: "#sellOrderIdTpl"
             }, {
                 field: "createTime",
                 title: "创建时间",
@@ -198,87 +201,54 @@
         }),
 
         i.render({
-            elem: "#LAY-app-content-comm",
-            url: layui.setter.base + "json/content/comment.js",
+            elem: "#LAY-app-order-detail-list",
             cols: [[{
-                type: "checkbox",
-                fixed: "left"
-            }, {
-                field: "id",
+                field: "type",
                 width: 100,
-                title: "ID",
-                sort: !0
+                title: "type",
+                templet: "#typeTpl"
             }, {
-                field: "reviewers",
-                title: "评论者",
+                field: "createTime",
+                title: "createTime",
                 minWidth: 100
             }, {
-                field: "content",
-                title: "评论内容",
+                field: "operPrice",
+                title: "operPrice",
                 minWidth: 100
             }, {
-                field: "commtime",
-                title: "评论时间",
+                field: "symbol",
+                title: "symbol",
                 minWidth: 100,
                 sort: !0
             }, {
-                title: "操作",
-                width: 150,
-                align: "center",
-                fixed: "right",
-                toolbar: "#table-content-com"
+                field: "amount",
+                title: "amount",
+                minWidth: 100,
+                sort: !0
+            }, {
+                field: "orderId",
+                title: "orderId",
+                minWidth: 100,
+                sort: !0
+            }, {
+                field: "from",
+                title: "from",
+                minWidth: 100,
+                templet: "#fromTpl"
             }]],
-            page: !0,
-            limit: 10,
-            limits: [10, 15, 20, 25, 30],
-            limits: [10, 15, 20, 25, 30],
             text: "对不起，加载出现异常！",
             parseData: function(res){ //res 即为原始返回的数据
                 for(var i=0;i<res.resultList.length;i++){
-                    var buyIndex = res.resultList[i].buyIndex
-                    res.resultList[i].buyIndex = formatDate(new Date(buyIndex*1000))
-                    if(res.resultList[i].updateTime == null){
-                        res.resultList[i].updateTime =""
-                    }else{
-                        res.resultList[i].updateTime = renderTime(res.resultList[i].updateTime)
-                    }
+                    res.resultList[i].createTime = renderTime(res.resultList[i].createTime)
                 }
-
                 return {
                     "code": res.code, //解析接口状态
                     "msg": res.description, //解析提示文本
-                    "count": res.totalCount, //解析数据长度
-                    "data": res.resultList //解析数据列表
+                    "count": res.totalCount
                 };
-            } ,request: {
-                limitName: 'pageSize' //每页数据量的参数名，默认：limit
             }
-        }),
-        i.on("tool(LAY-app-content-comm)", function(t) {
-            t.data;
-            "del" === t.event ? layer.confirm("确定删除此条评论？", function(e) {
-                t.del(),
-                    layer.close(e)
-            }) : "edit" === t.event && layer.open({
-                type: 2,
-                title: "编辑评论",
-                content: "../../../views/app/content/contform.html",
-                area: ["450px", "300px"],
-                btn: ["确定", "取消"],
-                yes: function(t, e) {
-                    var n = window["layui-layer-iframe" + t]
-                        , l = "layuiadmin-app-comm-submit"
-                        , a = e.find("iframe").contents().find("#" + l);
-                    n.layui.form.on("submit(" + l + ")", function(e) {
-                        e.field;
-                        i.reload("LAY-app-content-comm"),
-                            layer.close(t)
-                    }),
-                        a.trigger("click")
-                },
-                success: function(t, e) {}
-            })
-        }),
+        })
+        ,
         t("contlist", {})
 });
 

@@ -46,7 +46,8 @@ public class Constant {
 		STOP_LOSS(1,"止损"),
 		BUY_QUEUE(2,"进入买队列"),
 		SELL_QUEUE(3,"进入卖队列"),
-		LIMIT_ORDER(4,"挂单");
+		LIMIT_ORDER(4,"挂单"),
+		TRADE_SUCCESS(5,"交易完成");
 
 		private Integer status;
 
@@ -81,5 +82,5 @@ public class Constant {
 							.orElse(null);
 		}
 	}
-	
+
 }

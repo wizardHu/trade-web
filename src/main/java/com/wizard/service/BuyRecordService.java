@@ -56,6 +56,12 @@ public class BuyRecordService {
 
         query.generateStartIndex();
 
+        TimeBean createTime = DateUtils.splitTime(query.getCreateTime());
+        if(createTime != null){
+            query.setBeginCreateTime(createTime.getBegin());
+            query.setEndCreateTime(createTime.getEnd());
+        }
+
         List<BuySellHistoryRecordModel> list = buyRecordMapper.getBuySellHistoryRecord(query);
         for (BuySellHistoryRecordModel buySellHistoryRecordModel : list) {
             if(buySellHistoryRecordModel.getSellPrice() != null && buySellHistoryRecordModel.getSellPrice() != 0){

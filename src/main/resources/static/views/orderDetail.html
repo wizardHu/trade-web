@@ -15,56 +15,11 @@
 <body>
 
 <div class="layui-fluid">
-    <div class="layui-card">
-        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">订单Id</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="orderId" placeholder="请输入" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-
-                <div class="layui-inline">
-                    <label class="layui-form-label">交易时间</label>
-                    <div class="layui-input-inline">
-                        <input type="text" class="layui-input" id="test-laydate-range-datetime" placeholder="yyyy-MM-dd HH:mm:ss" lay-key="7">
-                    </div>
-                </div>
-
-            </div>
-            <div class="layui-inline">
-                <label class="layui-form-label">交易对</label>
-                <div class="layui-input-inline">
-                    <select id="symbolSelect" name="label">
-                        <option value="">请选择</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="layui-inline">
-                <label class="layui-form-label">状态</label>
-                <div class="layui-input-inline">
-                    <select id="statusSelect" name="label">
-                        <option value="">请选择</option>
-                        <option value="1">正常</option>
-                        <option value="2">止损</option>
-                        <option value="3">等待买</option>
-                        <option value="4">等待卖</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="layui-inline">
-                <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-search">
-                    <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
-                </button>
-            </div>
-        </div>
-    </div>
 
     <div class="layui-card-body">
-        <table id="LAY-app-buy-sell-history-record-list" lay-filter="LAY-app-buy-sell-history-record-list"></table>
+        <table id="LAY-app-order-detail-list" lay-filter="LAY-app-order-detail-list"></table>
+
+        <blockquote class="layui-elem-quote"></blockquote>
 
         <script type="text/html" id="typeTpl">
             {{#  if(d.type == 0){ }}
@@ -74,12 +29,15 @@
             {{#  }  }}
         </script>
 
-        <script type="text/html" id="profitTpl">
-            <font size="3" color="green"> {{ d.profit }} </font>
+        <script type="text/html" id="fromTpl">
+            {{#  if(d.from == 1){ }}
+            <button class="layui-btn layui-btn-normal layui-btn-xs" style="background-color: #5FB878;">正常交易</button>
+            {{#  } else if(d.from == 2) { }}
+            <button class="layui-btn layui-btn-danger layui-btn-xs">止损交易</button>
+            {{#  }  }}
         </script>
-        <script type="text/html" id="profitPreTpl">
-            <font size="3" color="green"> {{ d.profitPercentage }} </font>
-        </script>
+
+
     </div>
 </div>
 </div>
@@ -95,82 +53,42 @@
             ,form = layui.form;
         var laydate = layui.laydate;
 
-        //日期时间选择器
-        laydate.render({
-            elem: '#test-laydate-range-datetime'
-            ,type: 'datetime'
-            ,range: true
-        });
+        var orderId = getQueryVariable("orderId")
 
-        var form = layui.form;
+        //执行重载
+        /* table.reload('LAY-app-order-detail-list', {
+             url:  "/orderDetail/orderDetail",
+             where: {"orderId":orderId}
+         });*/
 
         layui.$.ajax({
-            url: '/transactionConfig/getSymbolSelectDate',
+            url: '/orderDetail/orderDetail',
             dataType: 'json',
             type: 'get',
+            data:{"orderId":orderId},
             success: function (data) {
-                $.each(data.resultList, function (index, item) {
-                    $('#symbolSelect').append(new Option(item.value, item.id));// 下拉菜单里添加元素
+
+                layui.$.each(data.resultList, function (index, item) {
+                    data.resultList[index].createTime = renderTime(data.resultList[index].createTime)
                 });
-                layui.form.render("select");
+
+                table.reload('LAY-app-order-detail-list', {
+                    "data": data.resultList //解析数据列表
+                })
             }
         })
 
-        //监听搜索
-        form.on('submit(LAY-app-contlist-search)', function(data){
-            var field = data.field;
-
-            //执行重载
-            table.reload('LAY-app-content-list', {
-                where: field
-            });
-        });
-
-        var $ = layui.$, active = {
-            batchdel: function(){
-                var checkStatus = table.checkStatus('LAY-app-content-list')
-                    ,checkData = checkStatus.data; //得到选中的数据
-
-                if(checkData.length === 0){
-                    return layer.msg('请选择数据');
-                }
-
-                layer.confirm('确定删除吗？', function(index) {
-
-                    //执行 Ajax 后重载
-                    /*
-                    admin.req({
-                      url: 'xxx'
-                      //,……
-                    });
-                    */
-                    table.reload('LAY-app-content-list');
-                    layer.msg('已删除');
-                });
-            },
-            add: function(){
-                layer.open({
-                    type: 2
-                    ,title: '添加文章'
-                    ,content: 'listform.html'
-                    ,maxmin: true
-                    ,area: ['550px', '550px']
-                    ,btn: ['确定', '取消']
-                    ,yes: function(index, layero){
-                        //点击确认触发 iframe 内容中的按钮提交
-                        var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
-                        submit.click();
-                    }
-                });
-            }
-        };
-
-        $('.layui-btn.layuiadmin-btn-list').on('click', function(){
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
-        });
-
     });
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
 </script>
 </body>
 </html>

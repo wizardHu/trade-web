@@ -41,60 +41,62 @@
                 </div>
 
 
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">交易对</label>
-                    <div class="layui-input-inline">
-                        <select id="symbolSelect" name="symbol">
-                            <option value="">请选择</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="layui-inline">
-                    <label class="layui-form-label">状态</label>
-                    <div class="layui-input-inline">
-                        <select id="statusSelect" name="status">
-                            <option value="">请选择</option>
-                            <option value="0">正常</option>
-                            <option value="1">止损</option>
-                            <option value="2">等待买</option>
-                            <option value="3">等待卖</option>
-                            <option value="4">挂单</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="layui-inline">
-                    <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-search">
-                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
-                    </button>
+            <div class="layui-inline">
+                <label class="layui-form-label">交易对</label>
+                <div class="layui-input-inline">
+                    <select id="symbolSelect" name="symbol">
+                        <option value="">请选择</option>
+                    </select>
                 </div>
             </div>
-        </div>
 
-        <div class="layui-card-body">
-            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
-            <script type="text/html" id="table-content-list">
-                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-            </script>
-            <script type="text/html" id="statusTpl">
+            <div class="layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select id="statusSelect" name="status">
+                        <option value="">请选择</option>
+                        <option value="0">正常</option>
+                        <option value="1">止损</option>
+                        <option value="2">等待买</option>
+                        <option value="3">等待卖</option>
+                        <option value="4">挂单</option>
+                    </select>
+                </div>
+            </div>
 
-                {{#  if(d.status == 0){ }}
-                <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
-                {{#  } else if(d.status == 1) { }}
-                <button class="layui-btn layui-btn-danger layui-btn-xs">止损</button>
-                {{#  } else if(d.status == 2) { }}
-                <button class="layui-btn layui-btn-normal layui-btn-xs">等待买</button>
-                {{#  } else if(d.status == 3) { }}
-                <button class="layui-btn layui-btn-normal layui-btn-xs">等待卖</button>
-                {{#  } else if(d.status == 4) { }}
-                <button class="layui-btn layui-btn-xs">挂单</button>
-                {{#  } }}
-
-            </script>
+            <div class="layui-inline">
+                <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-search">
+                    <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                </button>
+            </div>
         </div>
     </div>
+
+    <div class="layui-card-body">
+        <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
+        <script type="text/html" id="table-content-list">
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+        </script>
+        <script type="text/html" id="statusTpl">
+
+            {{#  if(d.status == 0){ }}
+            <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
+            {{#  } else if(d.status == 1) { }}
+            <button class="layui-btn layui-btn-danger layui-btn-xs">止损</button>
+            {{#  } else if(d.status == 2) { }}
+            <button class="layui-btn layui-btn-normal layui-btn-xs">等待买</button>
+            {{#  } else if(d.status == 3) { }}
+            <button class="layui-btn layui-btn-normal layui-btn-xs">等待卖</button>
+            {{#  } else if(d.status == 4) { }}
+            <button class="layui-btn layui-btn-xs">挂单</button>
+            {{#  } }}
+        </script>
+
+        <script type="text/html" id="orderIdTpl">
+            <a lay-href="/views/orderDetail.html?orderId={{d.orderId}}">{{d.orderId}}</a>
+        </script>
+    </div>
+</div>
 </div>
 
 <script src="../../../layuiadmin/layui/layui.js"></script>

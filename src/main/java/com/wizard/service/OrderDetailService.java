@@ -37,7 +37,7 @@ public class OrderDetailService {
 
         //1 获取订单状态
         OrderStatusModel orderStatusModel = buildOrderStatus(orderId);
-
+//
         if(orderStatusModel == null ) return CommonListResult.getFailedResult(Constant.ReturnCodeEnum.FAIL.getCode(),"订单不存在");
 
         //2 获取订单所有交易记录
@@ -73,8 +73,21 @@ public class OrderDetailService {
             orderStatusModel.setStatus(buyRecord.getStatus());
             orderStatusModel.setSymbol(buyRecord.getSymbol());
             orderStatusModel.setDesc(Constant.BuyRecordStatusEnum.convert(buyRecord.getStatus()).getDesc());
-        }else {
-            return null;
+        }else {//待交易表没有的话，就查交易记录表
+
+            BuySellHistoryRecordQuery buySellHistoryRecordQuery = new BuySellHistoryRecordQuery();
+            buySellHistoryRecordQuery.setOrderId(orderId);
+            CommonListResult<BuySellHistoryRecordModel>  buySellHistoryRecordModels = buyRecordService.getBuySellHistoryRecordList(buySellHistoryRecordQuery);
+            if(buySellHistoryRecordModels != null && !CollectionUtils.isEmpty(buySellHistoryRecordModels.getResultList())){
+                BuySellHistoryRecordModel buySellHistoryRecordModel = buySellHistoryRecordModels.getResultList().get(0);
+
+                orderStatusModel.setOrderId(orderId);
+                orderStatusModel.setStatus(Constant.BuyRecordStatusEnum.TRADE_SUCCESS.getStatus());
+                orderStatusModel.setSymbol(buySellHistoryRecordModel.getSymbol());
+                orderStatusModel.setDesc(Constant.BuyRecordStatusEnum.TRADE_SUCCESS.getDesc());
+            }else {
+                return null;
+            }
         }
 
         return orderStatusModel;
