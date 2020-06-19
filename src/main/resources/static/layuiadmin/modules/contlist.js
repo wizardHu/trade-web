@@ -92,33 +92,27 @@
     }),
         i.on("tool(LAY-app-content-list)", function(t) {
             var e = t.data;
-            "del" === t.event ? layer.confirm("确定删除此文章？", function(e) {
-                t.del(),
-                    layer.close(e)
-            }) : "edit" === t.event && layer.open({
-                type: 2,
-                title: "编辑文章",
-                content: "../../../views/app/content/listform.html?id=" + e.id,
-                maxmin: !0,
-                area: ["550px", "550px"],
-                btn: ["确定", "取消"],
-                yes: function(e, i) {
-                    var l = window["layui-layer-iframe" + e]
-                        , a = i.find("iframe").contents().find("#layuiadmin-app-form-edit");
-                    l.layui.form.on("submit(layuiadmin-app-form-edit)", function(i) {
-                        var l = i.field;
-                        t.update({
-                            label: l.label,
-                            title: l.title,
-                            author: l.author,
-                            status: l.status
-                        }),
-                            n.render(),
-                            layer.close(e)
-                    }),
-                        a.trigger("click")
-                }
-            })
+
+            if("del" === t.event){
+                layer.prompt({title: '输入任何口令，并确认', formType: 1}, function(pass, index){
+                    layer.close(index);
+                    layui.$.ajax({
+                        url: '/tradeData/delBuyData',
+                        dataType: 'json',
+                        type: 'get',
+                        data:{"id":e.id,"passWord":pass},
+                        success: function (data) {
+                            if(data.isSuccess){
+                                layer.alert("删除成功");
+                                i.reload('LAY-app-content-list')
+                            }else {
+                                layer.alert(data.description);
+                            }
+                        }
+                    })
+                });
+            }
+
         }),
         i.render({
             elem: "#LAY-app-buy-sell-history-record-list",
@@ -216,18 +210,8 @@
                 title: "operPrice",
                 minWidth: 100
             }, {
-                field: "symbol",
-                title: "symbol",
-                minWidth: 100,
-                sort: !0
-            }, {
                 field: "amount",
                 title: "amount",
-                minWidth: 100,
-                sort: !0
-            }, {
-                field: "orderId",
-                title: "orderId",
                 minWidth: 100,
                 sort: !0
             }, {

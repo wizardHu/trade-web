@@ -115,4 +115,9 @@
         select count(*) from tb_jump_queue_history_record
         <include refid="jumpQueueHistoryRecordParams"/>
     </select>
+
+    <delete id="delByOrderId">
+        DELETE FROM tb_jump_queue_record WHERE order_id =#{orderId}
+    </delete>
+
 </mapper>

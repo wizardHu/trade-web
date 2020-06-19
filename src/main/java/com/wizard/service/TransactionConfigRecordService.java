@@ -7,6 +7,7 @@ import com.wizard.model.TransactionConfigModel;
 import com.wizard.model.from.TransactionConfigQuery;
 import com.wizard.model.from.TransactionConfigUpdate;
 import com.wizard.persistence.trade.TransactionConfigMapper;
+import com.wizard.util.CommonUtil;
 import com.wizard.util.DateUtils;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,7 @@ public class TransactionConfigRecordService {
      */
     public CommonResult modTransactionConfigModel(TransactionConfigUpdate transactionConfigUpdate){
 
-        String pwd = getNewPwd();
+        String pwd = CommonUtil.getNewPwd();
 
         if(System.currentTimeMillis() - lastTime < 30*1000){
             return CommonResult.getFailResult("等会再试");
@@ -97,21 +98,5 @@ public class TransactionConfigRecordService {
         return result;
     }
 
-
-    private String getNewPwd(){
-
-        String pwd = DateUtils.dateToString(new Date(),"yyyyMMddmm");
-
-        Calendar cal=Calendar.getInstance();
-        int d = cal.get(Calendar.DATE);
-
-        if(d % 2 == 0){
-            pwd += "amplee";
-        }else {
-            pwd += "wizard";
-        }
-
-        return pwd;
-    }
 
 }

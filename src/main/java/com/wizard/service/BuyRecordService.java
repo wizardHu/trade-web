@@ -1,15 +1,17 @@
 package com.wizard.service;
 
-import com.wizard.model.BuyRecordModel;
-import com.wizard.model.BuySellHistoryRecordModel;
-import com.wizard.model.CommonListResult;
-import com.wizard.model.TimeBean;
+import com.wizard.model.*;
 import com.wizard.model.from.BuyRecordQuery;
 import com.wizard.model.from.BuySellHistoryRecordQuery;
 import com.wizard.persistence.trade.BuyRecordMapper;
+import com.wizard.persistence.trade.JumpQueueRecordMapper;
+import com.wizard.util.CommonUtil;
+import com.wizard.util.Constant;
 import com.wizard.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.text.DecimalFormat;
@@ -19,8 +21,13 @@ import java.util.List;
 @Slf4j
 public class BuyRecordService {
 
+    private long lastTime = 0;
+
     @Resource
     private BuyRecordMapper buyRecordMapper;
+
+    @Resource
+    private JumpQueueRecordMapper jumpQueueRecordMapper;
 
     public CommonListResult<BuyRecordModel> getBuyRecordList(BuyRecordQuery query){
 
@@ -83,4 +90,45 @@ public class BuyRecordService {
         return result;
     }
 
+    /**
+     * 删除
+     * @param id
+     * @param passWord
+     * @return
+     */
+    @Transactional(value="tradeTransactionManager")
+    public CommonResult delBuyData(Integer id, String passWord) {
+
+        String pwd = CommonUtil.getNewPwd();
+
+        if(System.currentTimeMillis() - lastTime < 30*1000){
+            return CommonResult.getFailResult("等会再试");
+        }
+
+        if(!pwd.equals(passWord)){
+            lastTime = System.currentTimeMillis();
+            return CommonResult.getFailResult("密码错误");
+        }
+
+        BuyRecordQuery query = new BuyRecordQuery();
+        query.setId(id);
+        query.setStatus(Constant.BuyRecordStatusEnum.BUY_QUEUE.getStatus());
+
+        List<BuyRecordModel> list = buyRecordMapper.getBuyRecord(query);
+        if(!CollectionUtils.isEmpty(list)){
+            BuyRecordModel buyRecordModel = list.get(0);
+            log.info("del buyRecordModel={}",buyRecordModel);
+
+            int delCount = buyRecordMapper.delById(buyRecordModel.getId());
+            if(delCount > 0){
+                jumpQueueRecordMapper.delByOrderId(buyRecordModel.getOrderId());
+            }else {
+                return CommonResult.getFailResult("稍后再试");
+            }
+        }else {
+            return CommonResult.getFailResult("该状态不允许删除");
+        }
+
+        return CommonResult.getSuccResult();
+    }
 }

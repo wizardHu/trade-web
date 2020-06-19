@@ -19,7 +19,14 @@
     <div class="layui-card-body">
         <table id="LAY-app-order-detail-list" lay-filter="LAY-app-order-detail-list"></table>
 
-        <blockquote class="layui-elem-quote"></blockquote>
+        <div id="view"></div>
+        <script type="text/html" id="statusTpl">
+            <blockquote class="layui-elem-quote">
+                交易对：{{ d.symbol }} <br/>
+                状态：{{ d.desc }} <br/>
+                订单号：{{ d.orderId }}
+            </blockquote>
+        </script>
 
         <script type="text/html" id="typeTpl">
             {{#  if(d.type == 0){ }}
@@ -48,10 +55,9 @@
         base: '../../../layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'contlist', 'table',"laydate"], function(){
+    }).use(['index', 'contlist', 'table',"laytpl"], function(){
         var table = layui.table
-            ,form = layui.form;
-        var laydate = layui.laydate;
+            ,laytpl = layui.laytpl;
 
         var orderId = getQueryVariable("orderId")
 
@@ -75,6 +81,12 @@
                 table.reload('LAY-app-order-detail-list', {
                     "data": data.resultList //解析数据列表
                 })
+
+                var getTpl = statusTpl.innerHTML
+                    ,view = document.getElementById('view');
+                laytpl(getTpl).render(data.result, function(html){
+                    view.innerHTML = html;
+                });
             }
         })
 

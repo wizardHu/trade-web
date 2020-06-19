@@ -21,4 +21,6 @@ public interface JumpQueueRecordMapper {
 
     int getJumpQueueHistoryRecordCount(JumpQueueHistoryRecordQuery query);
 
+    int delByOrderId(String orderId);
+
 }

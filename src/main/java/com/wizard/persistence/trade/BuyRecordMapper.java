@@ -16,4 +16,6 @@ public interface BuyRecordMapper {
     List<BuySellHistoryRecordModel> getBuySellHistoryRecord(BuySellHistoryRecordQuery query);
 
     int getBuySellHistoryRecordCount(BuySellHistoryRecordQuery query);
+
+    int delById(Integer id);
 }

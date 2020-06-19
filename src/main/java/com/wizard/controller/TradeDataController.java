@@ -3,6 +3,7 @@ package com.wizard.controller;
 import com.wizard.model.BuyRecordModel;
 import com.wizard.model.BuySellHistoryRecordModel;
 import com.wizard.model.CommonListResult;
+import com.wizard.model.CommonResult;
 import com.wizard.model.from.BuyRecordQuery;
 import com.wizard.model.from.BuySellHistoryRecordQuery;
 import com.wizard.service.BuyRecordService;
@@ -30,6 +31,12 @@ public class TradeDataController {
 	public CommonListResult<BuySellHistoryRecordModel> getBuySellHistoryData(BuySellHistoryRecordQuery query) {
 		log.info("getSellHistoryData req={}",query);
 		return buyRecordService.getBuySellHistoryRecordList(query);
+	}
+
+	@RequestMapping("/delBuyData")
+	public CommonResult delBuyData(Integer id,String passWord) {
+		log.info("delBuyData id={}  passWord={}",id,passWord);
+		return buyRecordService.delBuyData(id,passWord);
 	}
 //
 //	@RequestMapping("/recordData")

@@ -6,6 +6,10 @@
 
         <where>
 
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
             <if test="symbol != null and symbol!=''">
                 and symbol = #{symbol}
             </if>
@@ -119,4 +123,9 @@
         </if>
 
     </select>
+
+    <delete id="delById">
+      DELETE from tb_buy_record WHERE id=#{id}
+    </delete>
+
 </mapper>
