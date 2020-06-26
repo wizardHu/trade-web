@@ -47,12 +47,13 @@
         </div>
 
         <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-add" data-type="add">增加</button>
+            </div>
             <table id="LAY-app-config-list" lay-filter="LAY-app-config-list"></table>
             <script type="text/html" id="table-config-list">
                 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i
                         class="layui-icon layui-icon-delete"></i>编辑</a>
-                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i
-                        class="layui-icon layui-icon-delete"></i>删除</a>
             </script>
             <script type="text/html" id="statusTpl">
 
@@ -133,20 +134,8 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">状态</label>
                             <div class="layui-input-inline">
-
-                                <!--<select id="status" name="status">
-                                    <option value="">请选择</option>
-                                    <option value="1"  {{#  if(d.status == 1){ }} selected {{#  } }}>正常</option>
-                                    <option value="0" {{#  if(d.status == 0){ }} selected {{#  } }}>失效</option>
-                                </select>-->
-                                <select >
-                                    <option value="">请选择</option>
-                                    <option value="0">正常</option>
-                                    <option value="1">止损</option>
-                                    <option value="2">等待买</option>
-                                    <option value="3">等待卖</option>
-                                    <option value="4">挂单</option>
-                                </select>
+                                <input type="text" name="status" id="status" lay-verify="required"
+                                       autocomplete="off" class="layui-input" value="{{d.status}}" placeholder="1 正常  0失效">
                             </div>
                         </div>
 
@@ -184,7 +173,7 @@
             }, {
                 field: "symbol",
                 title: "交易对",
-                minWidth: 50
+                minWidth: 150
             }, {
                 field: "everyExpense",
                 title: "单次交易金额",
@@ -252,25 +241,7 @@
             table.on("tool(LAY-app-config-list)", function (t) {
                 var e = t.data;
 
-                if ("del" === t.event) {
-                    layer.prompt({title: '输入任何口令，并确认', formType: 1}, function (pass, index) {
-                        layer.close(index);
-                        /*layui.$.ajax({
-                            url: '/tradeData/delBuyData',
-                            dataType: 'json',
-                            type: 'get',
-                            data:{"id":e.id,"passWord":pass},
-                            success: function (data) {
-                                if(data.isSuccess){
-                                    layer.alert("删除成功");
-                                    i.reload('LAY-app-content-list')
-                                }else {
-                                    layer.alert(data.description);
-                                }
-                            }
-                        })*/
-                    });
-                } else if ("edit" === t.event) {
+                if ("edit" === t.event) {
 
                     var getTpl = symbolTpl.innerHTML
 
@@ -279,7 +250,7 @@
 
                         layer.open({
                             type: 1,
-                            title: "编辑帖子",
+                            title: "编辑",
                             content: html,
                             btn: ["确定", "取消"],
                             resize: !1,
@@ -293,16 +264,19 @@
                                 var precision = document.getElementById('precision').value;
                                 var stopLoss = document.getElementById('stopLoss').value;
                                 var passWord = document.getElementById('passWord').value;
+                                var status = document.getElementById('status').value;
 
                                 layui.$.ajax({
-                                    url: '/tradeData/delBuyData',
+                                    url: '/transactionConfig/modTransactionConfigModel',
                                     dataType: 'json',
                                     type: 'get',
-                                    data:{"id":e.id,"passWord":pass},
+                                    data:{"id":id,"symbol":symbol,"everyExpense":everyExpense,"tradeGap":tradeGap,"minIncome":minIncome,"period":period
+                                        ,"precision":precision,"stopLoss":stopLoss,"passWord":passWord,"status":status},
                                     success: function (data) {
                                         if(data.isSuccess){
-                                            layer.alert("删除成功");
-                                            i.reload('LAY-app-content-list')
+                                            layer.alert("修改成功");
+                                            layer.close(e);
+                                            table.reload('LAY-app-config-list')
                                         }else {
                                             layer.alert(data.description);
                                         }
@@ -340,6 +314,63 @@
             table.reload('LAY-app-config-list', {
                 where: field
             });
+        });
+
+        //事件
+        var active = {
+            add: function(){
+                var getTpl = symbolTpl.innerHTML
+
+                laytpl(getTpl).render({"id":"","symbol":"","everyExpense":"","tradeGap":"","minIncome":"","period":""
+                    ,"precision":"","stopLoss":"","passWord":"","status":""}, function (html) {
+
+                    layer.open({
+                        type: 1,
+                        title: "新增",
+                        content: html,
+                        btn: ["确定", "取消"],
+                        resize: !1,
+                        yes: function (e, tt) {
+                            var id = document.getElementById('id').value;
+                            var symbol = document.getElementById('symbol').value;
+                            var everyExpense = document.getElementById('everyExpense').value;
+                            var tradeGap = document.getElementById('tradeGap').value;
+                            var minIncome = document.getElementById('minIncome').value;
+                            var period = document.getElementById('period').value;
+                            var precision = document.getElementById('precision').value;
+                            var stopLoss = document.getElementById('stopLoss').value;
+                            var passWord = document.getElementById('passWord').value;
+                            var status = document.getElementById('status').value;
+
+                            layui.$.ajax({
+                                url: '/transactionConfig/addTransactionConfig',
+                                dataType: 'json',
+                                type: 'get',
+                                data:{"id":id,"symbol":symbol,"everyExpense":everyExpense,"tradeGap":tradeGap,"minIncome":minIncome,"period":period
+                                    ,"precision":precision,"stopLoss":stopLoss,"passWord":passWord,"status":status},
+                                success: function (data) {
+                                    if(data.isSuccess){
+                                        layer.alert("修改成功");
+                                        layer.close(e);
+                                        table.reload('LAY-app-config-list')
+                                    }else {
+                                        layer.alert(data.description);
+                                    }
+                                }
+                            })
+
+                        },
+                        success: function (e, tt) {
+                        }
+                    })
+                });
+
+            }
+        }
+
+        layui.$('.layui-btn.layuiadmin-btn-add').on('click', function(){
+            var type = layui.$(this).data('type');
+            active[type] ? active[type].call(this) : '';
         });
 
     });

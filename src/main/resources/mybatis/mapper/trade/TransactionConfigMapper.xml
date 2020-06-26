@@ -58,7 +58,7 @@
             </if>
 
             <if test="precision != null">
-                precision = #{precision},
+                `precision` = #{precision},
             </if>
 
             <if test="status != null">
@@ -72,11 +72,20 @@
             <if test="period != null and period!= ''">
                 period = #{period},
             </if>
+
+            <if test="symbol != null and symbol!= ''">
+                symbol = #{symbol},
+            </if>
         </set>
 
         where id=#{id}
 
     </update>
+
+    <insert id="addRecord">
+      insert into tb_transaction_config(symbol,every_expense,trade_gap,min_income,period,`precision`,stopLoss,status) VALUES
+      (#{symbol},#{everyExpense},#{tradeGap},#{minIncome},#{period},#{precision},#{stopLoss},#{status})
+    </insert>
 
 
 </mapper>

@@ -4,17 +4,15 @@ import com.wizard.model.CommonListResult;
 import com.wizard.model.CommonResult;
 import com.wizard.model.SelectData;
 import com.wizard.model.TransactionConfigModel;
+import com.wizard.model.from.TransactionConfigAdd;
 import com.wizard.model.from.TransactionConfigQuery;
 import com.wizard.model.from.TransactionConfigUpdate;
 import com.wizard.persistence.trade.TransactionConfigMapper;
 import com.wizard.util.CommonUtil;
-import com.wizard.util.DateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -98,5 +96,31 @@ public class TransactionConfigRecordService {
         return result;
     }
 
+    /**
+     * 新增
+     * @param transactionConfigAdd
+     * @return
+     */
+    public CommonResult addTransactionConfig(TransactionConfigAdd transactionConfigAdd){
+
+        String pwd = CommonUtil.getNewPwd();
+
+        if(System.currentTimeMillis() - lastTime < 30*1000){
+            return CommonResult.getFailResult("等会再试");
+        }
+
+        if(!pwd.equals(transactionConfigAdd.getPassWord())){
+            lastTime = System.currentTimeMillis();
+            return CommonResult.getFailResult("密码错误");
+        }
+
+        int modCount = transactionConfigMapper.addRecord(transactionConfigAdd);
+
+        if(modCount > 0){
+            return CommonResult.getSuccResult();
+        }
+
+        return CommonResult.getFailResult("稍后再试");
+    }
 
 }

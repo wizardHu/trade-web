@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layuiAdmin 内容系统 - 文章列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/modules/laydate/default/laydate.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">交易对</label>
+                    <div class="layui-input-inline">
+                        <select id="symbolSelect" name="symbol">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-inline">
+                        <select id="statusSelect" name="status">
+                            <option value="">请选择</option>
+                            <option value="1">买队列中</option>
+                            <option value="0">正常</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-config-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <table id="LAY-app-stop-loss-list" lay-filter="LAY-app-stop-loss-list"></table>
+            <script type="text/html" id="statusTpl">
+                {{#  if(d.status == 0){ }}
+                <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
+                {{#  } else if(d.status == 1) { }}
+                <button class="layui-btn layui-btn-normal layui-btn-xs" style="background-color: #5FB878;">买队列中</button>
+                {{#  }  }}
+            </script>
+
+        </div>
+    </div>
+</div>
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table', "laytpl"], function () {
+        var table = layui.table
+            , form = layui.form, laytpl = layui.laytpl;
+
+        table.render({
+            elem: "#LAY-app-stop-loss-list",
+            url: "/stopLoss/getStopLossRecord",
+            cols: [[{
+                field: "id",
+                title: "id",
+                width: 120
+            }, {
+                field: "symbol",
+                title: "交易对",
+                width: 120
+            }, {
+                field: "sellPrice",
+                title: "卖出价格",
+                width: 120
+            }, {
+                field: "oriPrice",
+                title: "原始价格",
+                width: 100
+
+            }, {
+                field: "oriAmount",
+                title: "原始数量",
+                width: 120
+            }, {
+                field: "oriOrderId",
+                title: "原始订单ID",
+                width: 180
+            }, {
+                field: "orderId",
+                title: "订单ID",
+                width: 180
+            }, {
+                field: "status",
+                title: "状态",
+                width: 100,
+                templet: "#statusTpl"
+            }, {
+                field: "updateTime",
+                title: "更新时间",
+                width: 180
+            }, {
+                field: "createTime",
+                title: "创建时间",
+                width: 180
+            }]],
+            page: true,
+            limits: [10, 15, 20, 25, 30],
+            text: "对不起，加载出现异常！",
+            parseData: function (res) { //res 即为原始返回的数据
+                for (var i = 0; i < res.resultList.length; i++) {
+
+                    res.resultList[i].createTime = renderTime(res.resultList[i].createTime)
+                    if (res.resultList[i].updateTime == null) {
+                        res.resultList[i].updateTime = ""
+                    } else {
+                        res.resultList[i].updateTime = renderTime(res.resultList[i].updateTime)
+                    }
+                }
+
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.description, //解析提示文本
+                    "count": res.totalCount, //解析数据长度
+                    "data": res.resultList //解析数据列表
+                };
+            }, request: {
+                limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+        })
+
+
+        layui.$.ajax({
+            url: '/transactionConfig/getSymbolSelectDate',
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                layui.$.each(data.resultList, function (index, item) {
+                    layui.$('#symbolSelect').append(new Option(item.value, item.id));// 下拉菜单里添加元素
+                });
+                layui.form.render("select");
+            }
+        })
+
+        //监听搜索
+        form.on('submit(LAY-app-config-search)', function (data) {
+            var field = data.field;
+
+            //执行重载
+            table.reload('LAY-app-stop-loss-list', {
+                where: field
+            });
+        });
+
+        layui.$('.layui-btn.layuiadmin-btn-add').on('click', function(){
+            var type = layui.$(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+
+    function renderTime(date) {
+        var dateee = new Date(date).toJSON();
+        return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+    }
+</script>
+</body>
+</html>
