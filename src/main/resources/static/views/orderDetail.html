@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
     <link rel="stylesheet" href="../../../layuiadmin/layui/css/modules/laydate/default/laydate.css" media="all">
+    <!-- 引入 echarts.js -->
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/echarts/echarts.min.js"></script>
 </head>
 <body>
 
@@ -44,6 +47,9 @@
             {{#  }  }}
         </script>
 
+        <div id="klineDiv" style="width: 100%;height:500px;"></div>
+
+        <script type="text/javascript" src="../js/kLine.js"></script>
 
     </div>
 </div>
@@ -87,6 +93,7 @@
                 laytpl(getTpl).render(data.result, function(html){
                     view.innerHTML = html;
                 });
+                kLine(data.resultList);
             }
         })
 

@@ -93,7 +93,7 @@
             </script>
 
             <script type="text/html" id="orderIdTpl">
-                <a lay-href="/views/orderDetail.html?orderId={{d.orderId}}">{{d.orderId}}</a>
+                <a lay-href="/views/orderDetail.html?orderId={{d.orderId}}&symbol={{d.symbol}}&time={{d.createTime}}">{{d.orderId}}</a>
             </script>
         </div>
     </div>
@@ -130,8 +130,8 @@
             dataType: 'json',
             type: 'get',
             success: function (data) {
-                $.each(data.resultList, function (index, item) {
-                    $('#symbolSelect').append(new Option(item.value, item.id));// 下拉菜单里添加元素
+                layui.$.each(data.resultList, function (index, item) {
+                    layui.$('#symbolSelect').append(new Option(item.value, item.id));// 下拉菜单里添加元素
                 });
                 layui.form.render("select");
             }

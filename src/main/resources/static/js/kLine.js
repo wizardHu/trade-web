@@ -6,7 +6,7 @@ var downBorderColor = '#008F28';
 // 数据意义：开盘(open)，收盘(close)，最低(lowest)，最高(highest)
 
 var data0 = "";
-var myChart = echarts.init(document.getElementById('main'));
+var myChart = echarts.init(document.getElementById('klineDiv'));
 myChart.setOption({
     title: {
         text: '稍后'
@@ -19,14 +19,32 @@ myChart.setOption({
 });
 
 
-$(function() {
-	
-	
+function kLine(tradeData) {
+
+	var symbol = ''
+	var time = ''
+	var orderId = ''
+	var query = window.location.search.substring(1);
+	var vars = query.split("&");
+	for (var i=0;i<vars.length;i++) {
+		var pair = vars[i].split("=");
+		if(pair[0] == 'symbol'){
+			symbol = pair[1]
+		}
+
+		if(pair[0] == 'time'){
+			time = pair[1]
+		}
+
+		if(pair[0] == 'orderId'){
+			orderId = pair[1]
+		}
+	}
 	myChart.showLoading();
 	$.ajax({
 		type : "POST",
 		dataType : "json",
-		url : "/tradeData/getKline?symbol=eosusdt&period=1min&size=50",
+		url : "/kLine/getKline?symbol="+symbol+"&time="+time,
 		success : function(data) {
 			var list = []
 			myChart.hideLoading();
@@ -45,44 +63,33 @@ $(function() {
 			
 			data0 = splitData(list)
 			buySellPoint = []
-			
-			$.ajax({
-				type : "POST",
-				dataType : "json",
-				async : false,
-				url : "/tradeData/symbolRecordData",
-				data : {
-					"symbol" : "eosusdt"
-				},
-				success : function(data2) {
-					
-					for(i=0;i<data2.resultList.length;i++){
-						var dict ={}
-						var itemStyle = {}
-						var normal ={}
-						
-						var indexData = data2.resultList[i]
-						
-						dict["name"]=indexData.timeStamp
-						
-						if(indexData.type == 1){
-							dict["coord"]=[indexData.timeStampStr.substring(5),indexData.buyPrice]
-							dict["value"]=indexData.buyPrice
-							normal["color"]='rgb(50,205,50)'
-						}else if(indexData.type == 0){
-							dict["coord"]=[indexData.timeStampStr.substring(5),indexData.sellPrice]
-							dict["value"]=indexData.sellPrice
-						}
-							
-						itemStyle["normal"]=normal
-						dict["itemStyle"]=itemStyle
-						
-						buySellPoint.push(dict)
-					}
+
+
+			for(i=0;i<tradeData.length;i++){
+				var dict ={}
+				var itemStyle = {}
+				var normal ={}
+
+				var indexData = tradeData[i]
+
+				var indexTime = indexData.createTime.substring(5,indexData.createTime.length-2)+"00";
+				dict["name"]= indexTime
+
+				if(indexData.type == 1){
+					dict["coord"]=[indexTime,indexData.operPrice]
+					dict["value"]=indexData.operPrice
+					normal["color"]='rgb(50,205,50)'
+				}else if(indexData.type == 0){
+					dict["coord"]=[indexTime,indexData.operPrice]
+					dict["value"]=indexData.operPrice
 				}
-			});
-			
-			
+
+				itemStyle["normal"]=normal
+				dict["itemStyle"]=itemStyle
+
+				buySellPoint.push(dict)
+			}
+
 
 			option = {
 					
@@ -302,8 +309,7 @@ $(function() {
 			myChart.setOption(option);
 		}
 	});
-	
-})
+}
 
 function splitData(rawData) {
 	    var categoryData = [];

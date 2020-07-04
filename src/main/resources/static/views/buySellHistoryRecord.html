@@ -86,10 +86,10 @@
             <font size="3" color="green"> {{ d.profitPercentage }} </font>
         </script>
         <script type="text/html" id="buyOrderIdTpl">
-            <a lay-href="/views/orderDetail.html?orderId={{d.buyOrderId}}">{{d.buyOrderId}}</a>
+            <a lay-href="/views/orderDetail.html?orderId={{d.buyOrderId}}&symbol={{d.symbol}}&time={{d.createTime}}">{{d.buyOrderId}}</a>
         </script>
         <script type="text/html" id="sellOrderIdTpl">
-            <a lay-href="/views/orderDetail.html?orderId={{d.sellOrderId}}">{{d.sellOrderId}}</a>
+            <a lay-href="/views/orderDetail.html?orderId={{d.sellOrderId}}&symbol={{d.symbol}}&time={{d.createTime}}">{{d.sellOrderId}}</a>
         </script>
     </div>
 </div>

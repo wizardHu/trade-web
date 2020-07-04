@@ -35,6 +35,9 @@ public class AmpleeApplicationTests {
 	@Resource
 	private OrderDetailService orderDetailService;
 
+	@Resource
+	private KLineService kLineService;
+
 	@Test
 	public void getBuyRecord(){
 
@@ -156,6 +159,13 @@ public class AmpleeApplicationTests {
 		CommonResult result = transactionConfigRecordService.modTransactionConfigModel(transactionConfigUpdate);
 
 		System.out.println(result);
+	}
+
+	@Test
+	public void getKline(){
+
+		System.out.println(kLineService.getKline("eosusdt", "2020-07-04 03:10:00"));
+
 	}
 
 }

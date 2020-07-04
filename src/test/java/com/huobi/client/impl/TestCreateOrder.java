@@ -3,8 +3,6 @@ package com.huobi.client.impl;
 import com.alibaba.fastjson.JSON;
 import com.huobi.client.RequestOptions;
 import com.huobi.client.SyncRequestClient;
-import com.huobi.client.exception.HuobiApiException;
-import com.huobi.client.impl.utils.JsonWrapper;
 import com.huobi.client.model.Account;
 import com.huobi.client.model.User;
 import com.huobi.client.model.enums.AccountType;
@@ -12,23 +10,12 @@ import com.huobi.client.model.enums.OrderType;
 import com.huobi.client.model.request.NewOrderRequest;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({AccountsInfoMap.class})
-@PowerMockIgnore({"javax.crypto.*"})
 
 public class TestCreateOrder {
 
@@ -65,50 +52,6 @@ public class TestCreateOrder {
     //map.put("123",)
   }
 
-  @Test
-  public void testResult_Normal() {
-    PowerMockito.mockStatic(AccountsInfoMap.class);
-    PowerMockito.when(AccountsInfoMap.getUser("12345")).thenReturn(testAccount);
-    RestApiRequest<Long> restApiRequest =
-        impl.createOrder(CorrectnewOrderRequest);
-    JsonWrapper jsonWrapper = JsonWrapper.parseFromString(data);
-    long id = restApiRequest.jsonParser.parseJson(jsonWrapper);
-    assertEquals(24876987459L, id);
-
-  }
-
-  @Test
-  public void testResult_Unexpected() {
-    PowerMockito.mockStatic(AccountsInfoMap.class);
-    PowerMockito.when(AccountsInfoMap.getUser("12345")).thenReturn(testAccount);
-    RestApiRequest<Long> restApiRequest =
-        impl.createOrder(CorrectnewOrderRequest);
-    JsonWrapper jsonWrapper = JsonWrapper.parseFromString(Errordata);
-    thrown.expect(HuobiApiException.class);
-    thrown.expectMessage("Get json item field");
-    restApiRequest.jsonParser.parseJson(jsonWrapper);
-  }
-
-  @Test
-  public void testInvalidSymbol() {
-    thrown.expect(HuobiApiException.class);
-    impl.createOrder(WrongnewOrderRequest);
-  }
-
-  @Test
-  public void testNullCurrency() {
-    thrown.expect(HuobiApiException.class);
-    NewOrderRequest req = new NewOrderRequest("btcusdt", null, null, null, null);
-    impl.createOrder(req);
-  }
-
-  @Test
-  public void test_limit() {
-    thrown.expect(HuobiApiException.class);
-    NewOrderRequest req = new NewOrderRequest("xrpusdt", AccountType.SPOT, OrderType.SELL_LIMIT,
-        new BigDecimal(16), new BigDecimal(0.20));
-    impl.createOrder(req);
-  }
 
   public static void main(String[] args) {
 
