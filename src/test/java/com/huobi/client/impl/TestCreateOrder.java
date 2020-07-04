@@ -59,8 +59,6 @@ public class TestCreateOrder {
             "1",
             "1");
 
-//    RestApiRequestImpl impl = new RestApiRequestImpl("8419e46c-b85831c9-8f1c62d2-f226c", "d3c5dfc3-c126780c-4dff10f0-5d3f1", new RequestOptions());
-//    AccountsInfoMap.updateUserInfo("8419e46c-b85831c9-8f1c62d2-f226c",impl);
     NewOrderRequest req = new NewOrderRequest("xrpusdt", AccountType.SPOT, OrderType.SELL_LIMIT,
             new BigDecimal(75), new BigDecimal("0.183"));
    System.out.println(JSON.toJSONString(syncClient.createOrder(req)));
