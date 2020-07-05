@@ -7,14 +7,7 @@
     i.render({
         elem: "#LAY-app-content-list",
         url:  "/tradeData/buyData",
-        cols: [[{
-            type: "checkbox",
-            fixed: "left"
-        }, {
-            field: "id",
-            title: "id",
-            sort: !0
-        }, {
+        cols: [[ {
             field: "symbol",
             title: "交易对",
             minWidth: 80
@@ -26,6 +19,11 @@
             field: "oriPrice",
             title: "原始价格",
             width: 100
+
+        }, {
+            field: "minTradePrice",
+            title: "最低交易价格",
+            width: 120
 
         }, {
             field: "createTime",

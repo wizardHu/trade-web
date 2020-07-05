@@ -38,6 +38,9 @@ public class AmpleeApplicationTests {
 	@Resource
 	private KLineService kLineService;
 
+	@Resource
+	private StatisticService statisticService;
+
 	@Test
 	public void getBuyRecord(){
 
@@ -165,6 +168,13 @@ public class AmpleeApplicationTests {
 	public void getKline(){
 
 		System.out.println(kLineService.getKline("eosusdt", "2020-07-04 03:10:00"));
+
+	}
+
+	@Test
+	public void statisticProfit(){
+
+		System.out.println(statisticService.statisticProfit());
 
 	}
 

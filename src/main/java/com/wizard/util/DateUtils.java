@@ -40,6 +40,15 @@ public class DateUtils   {
         }
     }
 
+    public static String formatDefaultDate(Date date) {
+        try {
+            SimpleDateFormat formatDate = new SimpleDateFormat(DEFAULT_DATE_TIME);
+            return formatDate.format(date);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     public static Date addHour(Date date, int hour) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);

@@ -80,10 +80,23 @@
         </script>
 
         <script type="text/html" id="profitTpl">
+
+            {{#  if(d.profit > 0){ }}
             <font size="3" color="green"> {{ d.profit }} </font>
+            {{#  } else         { }}
+            <font size="3" color="red"> {{ d.profit }} </font>
+            {{#  }  }}
+
         </script>
         <script type="text/html" id="profitPreTpl">
+
+            {{#  if(d.profit > 0){ }}
             <font size="3" color="green"> {{ d.profitPercentage }} </font>
+            {{#  } else         { }}
+            <font size="3" color="red"> {{ d.profitPercentage }} </font>
+            {{#  }  }}
+
+
         </script>
         <script type="text/html" id="buyOrderIdTpl">
             <a lay-href="/views/orderDetail.html?orderId={{d.buyOrderId}}&symbol={{d.symbol}}&time={{d.createTime}}">{{d.buyOrderId}}</a>

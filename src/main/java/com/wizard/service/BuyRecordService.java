@@ -1,5 +1,6 @@
 package com.wizard.service;
 
+import com.huobi.client.model.Candlestick;
 import com.wizard.model.*;
 import com.wizard.model.from.BuyRecordQuery;
 import com.wizard.model.from.BuySellHistoryRecordQuery;
@@ -29,6 +30,9 @@ public class BuyRecordService {
     @Resource
     private JumpQueueRecordMapper jumpQueueRecordMapper;
 
+    @Resource
+    private HuoBiService huoBiService;
+
     public CommonListResult<BuyRecordModel> getBuyRecordList(BuyRecordQuery query){
 
         CommonListResult<BuyRecordModel> result = CommonListResult.getSuccListResult();
@@ -47,6 +51,16 @@ public class BuyRecordService {
         }
 
         List<BuyRecordModel> list = buyRecordMapper.getBuyRecord(query);
+
+        for (BuyRecordModel buyRecordModel : list) {
+
+            Float minTradePrice = buyRecordModel.getPrice() + buyRecordModel.getPrice() * buyRecordModel.getMinIncome();
+
+            DecimalFormat df2 = new DecimalFormat("0.0000");//格式化小数
+            buyRecordModel.setMinTradePrice(Float.parseFloat(df2.format(minTradePrice)));
+
+        }
+
         int count = buyRecordMapper.getBuyRecordCount(query);
 
         result.setResultList(list);
@@ -76,8 +90,20 @@ public class BuyRecordService {
 
                 DecimalFormat df2 = new DecimalFormat("0.0000");//格式化小数
                 buySellHistoryRecordModel.setProfit(Float.parseFloat(df2.format(profit * buySellHistoryRecordModel.getAmount())));
-
                 buySellHistoryRecordModel.setProfitPercentage(Float.parseFloat(df2.format(profit*100/buySellHistoryRecordModel.getBuyPrice())));
+            }else {
+
+               Candlestick candlestick = huoBiService.candlestickCache.getUnchecked(buySellHistoryRecordModel.getSymbol());
+               if(candlestick != null && candlestick.getClose()!=null){
+
+                   Float profit = candlestick.getClose().floatValue() - buySellHistoryRecordModel.getBuyPrice() ;
+
+                   DecimalFormat df2 = new DecimalFormat("0.0000");//格式化小数
+                   buySellHistoryRecordModel.setProfit(Float.parseFloat(df2.format(profit * buySellHistoryRecordModel.getAmount())));
+                   buySellHistoryRecordModel.setProfitPercentage(Float.parseFloat(df2.format(profit*100/buySellHistoryRecordModel.getBuyPrice())));
+
+               }
+
             }
         }
 
