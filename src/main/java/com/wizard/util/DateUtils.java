@@ -34,6 +34,7 @@ public class DateUtils   {
     public static String formatDate(Date date, String dateFormate) {
         try {
             SimpleDateFormat formatDate = new SimpleDateFormat(dateFormate);
+            formatDate.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
             return formatDate.format(date);
         } catch (Exception e) {
             return "";
@@ -43,6 +44,7 @@ public class DateUtils   {
     public static String formatDefaultDate(Date date) {
         try {
             SimpleDateFormat formatDate = new SimpleDateFormat(DEFAULT_DATE_TIME);
+            formatDate.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
             return formatDate.format(date);
         } catch (Exception e) {
             return "";
