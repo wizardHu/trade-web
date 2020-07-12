@@ -11,29 +11,48 @@
 </head>
 <body>
 
-<div class="layui-fluid">
-    <div class="layui-row layui-col-space15" id="view">
-    </div>
+<div class="layui-fluid" id="view">
+<!--    <script type="text/html" id="statisticTpl">-->
+<!--        {{#  for(let i=0; i< d.total.length; i++){ }}-->
+<!--    <div class="layui-row layui-col-space10">-->
+<!--    123-->
+<!--    </div>-->
+<!--    {{#            }         }}-->
+<!--    </script>-->
 
-    <script type="text/html" id="statusTpl">
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">
-                    访问量
-                    <span class="layui-badge layui-bg-blue layuiadmin-badge">周</span>
-                </div>
-                <div class="layui-card-body layuiadmin-card-list">
-                    <p class="layuiadmin-big-font">9,999,666</p>
-                    <p>
-                        总计访问量
-                        <span class="layuiadmin-span-color">88万 <i class="layui-inline layui-icon layui-icon-flag"></i></span>
-                    </p>
+    <script type="text/html" id="statisticTpl">
+        {{#  for(let j=0; j< d.renderType.length; j++){ }}
+        <div class="layui-row layui-col-space10">
+        {{#  for(let i=0; i< d[d.renderType[j]].length; i++){ }}
+            <div class="layui-col-sm6 layui-col-md3 ">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        {{  d[d.renderType[j]][i].statisticPeriod }}
+                       <!-- <span class="layui-badge layui-bg-blue layuiadmin-badge">周</span>-->
+                    </div>
+                    <div class="layui-card-body layuiadmin-card-list">
+
+                        {{#  if(d[d.renderType[j]][i].profit >=0 ){ }}
+                            <p class="layuiadmin-big-font"> <span style="color: red"> {{  d[d.renderType[j]][i].profit }}</span></p>
+                        {{#            }         }}
+
+                        {{#  if(d[d.renderType[j]][i].profit < 0 ){ }}
+                        <p class="layuiadmin-big-font"> <span style="color: green"> {{  d[d.renderType[j]][i].profit }}</span></p>
+                        {{#            }         }}
+
+                        <p>
+                            统计周期
+                            <span class="layuiadmin-span-color">{{  d[d.renderType[j]][i].beginTime }} ~ {{  d[d.renderType[j]][i].endTime }} </span>
+                        </p>
+                    </div>
                 </div>
             </div>
+        {{#            }         }}
         </div>
+        {{#            }         }}
+
     </script>
 
-</div>
 </div>
 
 <script src="../../layuiadmin/layui/layui.js"></script>
@@ -42,32 +61,53 @@
         base: '../../layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index'], function(){
+    }).use(['index',"laytpl"], function(){
+
+        var laytpl = layui.laytpl;
 
         layui.$.ajax({
             url: '/statistic/statisticProfit',
             dataType: 'json',
             type: 'get',
             success: function (data) {
-
-               /* layui.$.each(data.resultList, function (index, item) {
-                    data.resultList[index].createTime = renderTime(data.resultList[index].createTime)
+                let renderList = {
+                    total: []
+                };
+                let renderType = [];
+                data.resultList.map((item) => {
+                    item.beginTime = renderTime(item.beginTime);
+                    item.endTime = renderTime(item.endTime);
+                    if (['all', 'oneMonth', 'lastWeek'].includes(item.symbol)) {
+                        renderList['total'].push(item);
+                        if (!renderType.includes('total')) {
+                            renderType.push('total');
+                        }
+                    } else {
+                        if (!renderList[item.symbol]) {
+                            renderList[item.symbol] = [];
+                        }
+                        if (!renderType.includes(item.symbol)) {
+                            renderType.push(item.symbol);
+                        }
+                        renderList[item.symbol].push(item)
+                    }
                 });
+                renderList.renderType = renderType;
 
-                table.reload('LAY-app-order-detail-list', {
-                    "data": data.resultList //解析数据列表
-                })
-
-                var getTpl = statusTpl.innerHTML
+                var getTpl = statisticTpl.innerHTML
                     ,view = document.getElementById('view');
-                laytpl(getTpl).render(data.result, function(html){
+                laytpl(getTpl).render(renderList, function(html){
                     view.innerHTML = html;
                 });
-                kLine(data.resultList);*/
             }
         })
 
     });
+
+    function renderTime(date) {
+        var dateee = new Date(date).toJSON();
+        return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '').substring(0,10)
+    }
 </script>
 </body>
 </html>

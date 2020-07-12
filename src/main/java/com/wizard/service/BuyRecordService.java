@@ -93,17 +93,26 @@ public class BuyRecordService {
                 buySellHistoryRecordModel.setProfitPercentage(Float.parseFloat(df2.format(profit*100/buySellHistoryRecordModel.getBuyPrice())));
             }else {
 
-               Candlestick candlestick = huoBiService.candlestickCache.getUnchecked(buySellHistoryRecordModel.getSymbol());
-               if(candlestick != null && candlestick.getClose()!=null){
+                String buyOrderId = buySellHistoryRecordModel.getBuyOrderId();
+                BuySellHistoryRecordQuery buyOrderIdQuery = new BuySellHistoryRecordQuery();
+                buyOrderIdQuery.setBuyOrderId(buyOrderId);
 
-                   Float profit = candlestick.getClose().floatValue() - buySellHistoryRecordModel.getBuyPrice() ;
+                int buyCount = buyRecordMapper.getBuySellHistoryRecordCount(buyOrderIdQuery);
 
-                   DecimalFormat df2 = new DecimalFormat("0.0000");//格式化小数
-                   buySellHistoryRecordModel.setProfit(Float.parseFloat(df2.format(profit * buySellHistoryRecordModel.getAmount())));
-                   buySellHistoryRecordModel.setProfitPercentage(Float.parseFloat(df2.format(profit*100/buySellHistoryRecordModel.getBuyPrice())));
+                if(buyCount == 1){//只有一次 买
 
-               }
+                    Candlestick candlestick = huoBiService.candlestickCache.getUnchecked(buySellHistoryRecordModel.getSymbol());
+                    if(candlestick != null && candlestick.getClose()!=null){
 
+                        Float profit = candlestick.getClose().floatValue() - buySellHistoryRecordModel.getBuyPrice() ;
+
+                        DecimalFormat df2 = new DecimalFormat("0.0000");//格式化小数
+                        buySellHistoryRecordModel.setProfit(Float.parseFloat(df2.format(profit * buySellHistoryRecordModel.getAmount())));
+                        buySellHistoryRecordModel.setProfitPercentage(Float.parseFloat(df2.format(profit*100/buySellHistoryRecordModel.getBuyPrice())));
+
+                    }
+
+                }
             }
         }
 

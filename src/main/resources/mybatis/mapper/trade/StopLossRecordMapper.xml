@@ -73,9 +73,6 @@
             LIMIT #{startIndex}, #{pageSize}
         </if>
 
-        <if test="startIndex == null">
-            LIMIT 1
-        </if>
     </select>
 
     <select id="getStopLossRecordCount" resultType="java.lang.Integer">

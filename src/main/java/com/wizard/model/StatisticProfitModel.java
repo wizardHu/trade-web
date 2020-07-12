@@ -17,4 +17,6 @@ public class StatisticProfitModel {
 
     private String symbol;
 
+    private String statisticPeriod;
+
 }

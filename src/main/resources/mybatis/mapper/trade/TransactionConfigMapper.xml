@@ -31,9 +31,7 @@
             LIMIT #{startIndex}, #{pageSize}
         </if>
 
-        <if test="startIndex == null">
-            LIMIT 1
-        </if>
+
     </select>
 
     <select id="getTransactionConfigRecordCount" resultType="java.lang.Integer">
