@@ -3,6 +3,7 @@ package com.huobi.client.model;
 
 import com.huobi.client.model.enums.AccountState;
 import com.huobi.client.model.enums.AccountType;
+import lombok.ToString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * The account information for spot account, margin account etc.
  */
+@ToString
 public class Account {
 
 

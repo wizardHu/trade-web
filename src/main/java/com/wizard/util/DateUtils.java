@@ -266,21 +266,6 @@ public class DateUtils   {
         return (toDate.getTime() - fromDate.getTime()) / 1000;
     }
 
-    public static void main(String[] args) {
-        /*
-         * System.out.println(DateUtils.formateDate(new Date(),
-         * DateUtils.SHOWING_DATE_FORMAT));
-         * System.out.println(DateUtils.formateDate(DateUtils.addDay(new Date(),
-         * 20), DateUtils.EXCEl_DATE_TIME_FORMAT));
-         * 
-         * System.out.println("month:"+DateUtils.formateDate(DateUtils.addMonth(new
-         * Date(), 3), DateUtils.EXCEl_DATE_TIME_FORMAT));
-         */
-        String str = "2012年09月13日";
-        Date date = DateUtils.stringToDate(str, "yyy年mm月dd日");
-        System.out.println(date);
-    }
-
     /**
      * 获取日期字符串列表，日期格式: yyyy-MM-dd
      * 
@@ -459,4 +444,7 @@ public class DateUtils   {
         return null;
     }
 
+    public static void main(String[] args) {
+        System.out.println(getDateWithStartTime(new Date()));
+    }
 }

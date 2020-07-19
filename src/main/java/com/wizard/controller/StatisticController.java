@@ -2,6 +2,7 @@ package com.wizard.controller;
 
 import com.wizard.model.CommonListResult;
 import com.wizard.model.StatisticProfitModel;
+import com.wizard.model.SymbolStatisticsOfdayModel;
 import com.wizard.service.StatisticService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,13 @@ public class StatisticController {
         log.info("statisticProfit ");
         return statisticService.statisticProfit();
     }
+
+    @RequestMapping("/statisticBalance")
+    public CommonListResult<SymbolStatisticsOfdayModel> statisticBalance() {
+        log.info("statisticBalance ");
+        return statisticService.getStatisticBalance();
+    }
+
 
 
 }

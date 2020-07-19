@@ -1,12 +1,14 @@
 package com.huobi.client.model;
 
 import com.huobi.client.model.enums.BalanceType;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
 /**
  * The balance of specified account.
  */
+@ToString
 public class Balance {
 
   private String currency;

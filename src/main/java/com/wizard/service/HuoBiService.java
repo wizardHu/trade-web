@@ -4,19 +4,21 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.huobi.client.SyncRequestClient;
+import com.huobi.client.model.Account;
 import com.huobi.client.model.Candlestick;
-import com.huobi.client.model.enums.CandlestickInterval;
+import com.huobi.client.model.enums.AccountType;
 import com.wizard.model.CommonListResult;
 import com.wizard.model.PriceModel;
 import com.wizard.model.TransactionConfigModel;
 import com.wizard.model.from.TransactionConfigQuery;
 import com.wizard.persistence.trade.TransactionConfigMapper;
+import com.wizard.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -36,18 +38,18 @@ public class HuoBiService {
         @Override
         public Candlestick  load(String key) {
 
-            List<Candlestick> candlestickList = syncRequestClient.getLatestCandlestick(
+           /* List<Candlestick> candlestickList = syncRequestClient.getLatestCandlestick(
                     key, CandlestickInterval.MIN1, 1);
 
             if(!CollectionUtils.isEmpty(candlestickList)){
                 return candlestickList.get(0);
             }
 
-            return new Candlestick();
+            return new Candlestick();*/
 
-          /*  Candlestick candlestick = new Candlestick();
+           Candlestick candlestick = new Candlestick();
            candlestick.setClose(new BigDecimal("4.5"));
-            return candlestick;*/
+            return candlestick;
 
         }
     });
@@ -73,5 +75,25 @@ public class HuoBiService {
 
         result.setResultList(priceModelList);
         return result;
+    }
+
+    /**
+     * 得到该账号类型下的余额
+     * @param accountType
+     * @return
+     */
+    public Account getAccountBalance(AccountType accountType){
+
+        Account account = null;
+
+        try {
+            account = syncRequestClient.getAccountBalance(accountType) ;
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+            CommonUtil.sleep(1000);
+            account = syncRequestClient.getAccountBalance(accountType) ;
+        }
+
+        return account;
     }
 }

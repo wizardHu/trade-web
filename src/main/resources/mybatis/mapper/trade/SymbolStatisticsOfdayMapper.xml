@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wizard.persistence.trade.SymbolStatisticsOfdayMapper" >
+
+    <insert id="addRecord">
+
+        insert into tb_symbol_statistics_ofday(symbol,balance,create_time,up_down_range) values (
+            #{symbol},#{balance},#{createTime},#{upDownRange}
+        )
+
+    </insert>
+
+    <select id="getRecordBySymbolAndTime" resultType="com.wizard.model.SymbolStatisticsOfdayModel">
+
+        select * from tb_symbol_statistics_ofday where symbol=#{symbol} and create_time=#{createTime}
+
+    </select>
+
+    <select id="getRecordByTime" resultType="com.wizard.model.SymbolStatisticsOfdayModel">
+        select * from tb_symbol_statistics_ofday where create_time>=#{time} order by create_time asc
+    </select>
+</mapper>

@@ -5,40 +5,39 @@
     <title>layuiAdmin 主页示例模板二</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+
+    <!-- 引入 echarts.js -->
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/echarts/echarts.min.js"></script>
 </head>
 <body>
 
 <div class="layui-fluid" id="view">
-<!--    <script type="text/html" id="statisticTpl">-->
-<!--        {{#  for(let i=0; i< d.total.length; i++){ }}-->
-<!--    <div class="layui-row layui-col-space10">-->
-<!--    123-->
-<!--    </div>-->
-<!--    {{#            }         }}-->
-<!--    </script>-->
-
     <script type="text/html" id="statisticTpl">
         {{#  for(let j=0; j< d.renderType.length; j++){ }}
         <div class="layui-row layui-col-space10">
-        {{#  for(let i=0; i< d[d.renderType[j]].length; i++){ }}
+            {{# for(let i=0; i< d[d.renderType[j]].length; i++){ }}
             <div class="layui-col-sm6 layui-col-md3 ">
                 <div class="layui-card">
                     <div class="layui-card-header">
-                        {{  d[d.renderType[j]][i].statisticPeriod }}
-                       <!-- <span class="layui-badge layui-bg-blue layuiadmin-badge">周</span>-->
+                        {{ d[d.renderType[j]][i].statisticPeriod }}
+                        <!-- <span class="layui-badge layui-bg-blue layuiadmin-badge">周</span>-->
                     </div>
                     <div class="layui-card-body layuiadmin-card-list">
 
-                        {{#  if(d[d.renderType[j]][i].profit >=0 ){ }}
-                            <p class="layuiadmin-big-font"> <span style="color: red"> {{  d[d.renderType[j]][i].profit }}</span></p>
-                        {{#            }         }}
+                        {{# if(d[d.renderType[j]][i].profit >=0 ){ }}
+                        <p class="layuiadmin-big-font"><span
+                                style="color: red"> {{  d[d.renderType[j]][i].profit }}</span></p>
+                        {{# } }}
 
-                        {{#  if(d[d.renderType[j]][i].profit < 0 ){ }}
-                        <p class="layuiadmin-big-font"> <span style="color: green"> {{  d[d.renderType[j]][i].profit }}</span></p>
-                        {{#            }         }}
+                        {{# if(d[d.renderType[j]][i].profit < 0 ){ }}
+                        <p class="layuiadmin-big-font"><span
+                                style="color: green"> {{  d[d.renderType[j]][i].profit }}</span></p>
+                        {{# } }}
 
                         <p>
                             统计周期
@@ -47,7 +46,7 @@
                     </div>
                 </div>
             </div>
-        {{#            }         }}
+            {{# } }}
         </div>
         {{#            }         }}
 
@@ -55,13 +54,42 @@
 
 </div>
 
+<div class="layui-fluid" id="balanceView">
+    <script type="text/html" id="balanceTpl">
+        <div class="layui-row layui-col-space15">
+            {{# layui.$.each(d.result, function (key, values) { }}
+            <div class="layui-row layui-col-space10">
+                <div class="layui-col-sm6 layui-col-md6 ">
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <div id="balance-{{ key }}" style="width: 100%;height:500px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-col-sm6 layui-col-md6 ">
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <div id="range-{{ key }}" style="width: 100%;height:500px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{# }) }}
+        </div>
+
+
+    </script>
+</div>
+
+
 <script src="../../layuiadmin/layui/layui.js"></script>
 <script>
     layui.config({
         base: '../../layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index',"laytpl"], function(){
+    }).use(['index', "laytpl"], function () {
 
         var laytpl = layui.laytpl;
 
@@ -95,18 +123,124 @@
                 renderList.renderType = renderType;
 
                 var getTpl = statisticTpl.innerHTML
-                    ,view = document.getElementById('view');
-                laytpl(getTpl).render(renderList, function(html){
+                    , view = document.getElementById('view');
+                laytpl(getTpl).render(renderList, function (html) {
                     view.innerHTML = html;
                 });
             }
-        })
+        });
+
+
+        layui.$.ajax({
+            url: '/statistic/statisticBalance',
+            dataType: 'json',
+            async: false,
+            type: 'get',
+            success: function (data) {
+                var laytpl = layui.laytpl;
+                var getTpl = balanceTpl.innerHTML
+                    , view = document.getElementById('balanceView');
+                laytpl(getTpl).render(data, function (html) {
+                    view.innerHTML = html;
+                });
+
+                layui.$.each(data.result, function (key, values) {
+
+                    var myChartBalance = echarts.init(document.getElementById('balance-' + key));
+                    var myChartRange = echarts.init(document.getElementById('range-' + key));
+                    myChartBalance.setOption({
+                        title: {
+                            text: '稍后'
+                        },
+                        tooltip: {},
+                        xAxis: {
+                            data: []
+                        },
+                        yAxis: {}
+                    });
+                    x = [];
+                    yRange = [];
+                    yBalance = [];
+
+                    for (var indexOfValues = 0; indexOfValues < values.length; indexOfValues++) {
+                        x.push(values[indexOfValues].createTimeStr)
+                        yRange.push(values[indexOfValues].upDownRange)
+                        yBalance.push(values[indexOfValues].balance)
+                    }
+                    var rangeLine = [{
+                        title: {
+                            text: key + "-幅度"
+                        },
+                        tooltip: {
+                            trigger: "axis"
+                        },
+                        xAxis: [{
+                            type: "category",
+                            data: x
+                        }],
+                        yAxis: [{
+                            type: "value",
+                            axisLabel: {
+                                formatter: "{value} %"
+                            }
+                        }],
+                        series: [{
+                            name: "涨幅",
+                            type: "line",
+                            data: yRange,
+                            markLine: {
+                                data: [{
+                                    type: "average",
+                                    name: "平均值"
+                                }]
+                            }
+                        }]
+                    }];
+
+                    var balanceLine = [{
+                        title: {
+                            text: key + "-余额"
+                        },
+                        tooltip: {
+                            trigger: "axis"
+                        },
+                        xAxis: [{
+                            type: "category",
+                            data: x
+                        }],
+                        yAxis: [{
+                            type: "value",
+                            axisLabel: {
+                                formatter: "{value}"
+                            }
+                        }],
+                        series: [{
+                            name: "余额",
+                            type: "line",
+                            data: yBalance,
+                            markLine: {
+                                data: [{
+                                    type: "average",
+                                    name: "平均值"
+                                }]
+                            }
+                        }]
+                    }];
+
+                    myChartBalance.setOption(balanceLine[0]);
+                    myChartRange.setOption(rangeLine[0]);
+
+
+                });
+
+            }
+        });
 
     });
 
     function renderTime(date) {
         var dateee = new Date(date).toJSON();
-        return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '').substring(0,10)
+        return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '').substring(0, 10)
     }
 </script>
 </body>

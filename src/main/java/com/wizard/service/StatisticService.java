@@ -1,14 +1,14 @@
 package com.wizard.service;
 
+import com.huobi.client.model.Account;
+import com.huobi.client.model.Balance;
 import com.huobi.client.model.Candlestick;
-import com.wizard.model.BuySellHistoryRecordModel;
-import com.wizard.model.CommonListResult;
-import com.wizard.model.StatisticProfitModel;
-import com.wizard.model.StopLossRecordModel;
+import com.huobi.client.model.enums.AccountType;
+import com.wizard.model.*;
 import com.wizard.model.from.BuySellHistoryRecordQuery;
 import com.wizard.model.from.StopLossRecordQuery;
-import com.wizard.persistence.trade.BuyRecordMapper;
-import com.wizard.persistence.trade.StopLossRecordMapper;
+import com.wizard.model.from.TransactionConfigQuery;
+import com.wizard.persistence.trade.*;
 import com.wizard.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,12 @@ public class StatisticService {
 
     @Resource
     private HuoBiService huoBiService;
+
+    @Resource
+    private TransactionConfigMapper transactionConfigMapper;
+
+    @Resource
+    private SymbolStatisticsOfdayMapper symbolStatisticsOfdayMapper;
 
     public CommonListResult<StatisticProfitModel> statisticProfit(){
 
@@ -218,4 +224,117 @@ public class StatisticService {
 
     }
 
+    public void statisticBalance(){
+
+        TransactionConfigQuery query = new TransactionConfigQuery();
+        List<TransactionConfigModel> transactionConfigModelList = transactionConfigMapper.getTransactionConfigRecord(query);
+
+        Account account =  huoBiService.getAccountBalance(AccountType.SPOT);
+        log.info("account={}",account);
+
+        if(account != null){
+
+            Date lastDate = DateUtils.getDateWithStartTime(DateUtils.addDay(new Date(), -1));
+
+            Map<String,SymbolStatisticsOfdayModel> stringSymbolStatisticsOfdayModelMap = new HashMap<>();
+
+            List<Balance> balances = account.getBalances();
+
+            float allUsdtBalance = 0;
+            DecimalFormat df2 = new DecimalFormat("0.00000");//格式化小数
+
+            for (TransactionConfigModel transactionConfigModel : transactionConfigModelList) {
+
+                String symbol = transactionConfigModel.getSymbol();
+                String currency = symbol.substring(0, symbol.length()-4);
+
+                for (Balance balance : balances) {
+                    if(balance != null && balance.getCurrency().equals(currency)){
+
+
+                        SymbolStatisticsOfdayModel symbolStatisticsOfdayModel = stringSymbolStatisticsOfdayModelMap.get(balance.getCurrency());
+
+                        if(symbolStatisticsOfdayModel == null){
+                            symbolStatisticsOfdayModel = new SymbolStatisticsOfdayModel();
+                            symbolStatisticsOfdayModel.setBalance(balance.getBalance().floatValue());
+                            symbolStatisticsOfdayModel.setCreateTime(DateUtils.getDateWithStartTime(new Date()));
+                            symbolStatisticsOfdayModel.setSymbol(balance.getCurrency());
+                            stringSymbolStatisticsOfdayModelMap.put(balance.getCurrency(),symbolStatisticsOfdayModel);
+                        }else{
+                            symbolStatisticsOfdayModel.setBalance(symbolStatisticsOfdayModel.getBalance()+balance.getBalance().floatValue());
+                        }
+
+                        float upDownRange = 0f;
+                        SymbolStatisticsOfdayModel lastSymbolStatisticsOfdayModel = symbolStatisticsOfdayMapper.getRecordBySymbolAndTime(currency,lastDate);//得到前一天的，计算涨跌幅
+                        if(lastSymbolStatisticsOfdayModel != null){
+                            upDownRange = Float.parseFloat(df2.format((symbolStatisticsOfdayModel.getBalance()-lastSymbolStatisticsOfdayModel.getBalance())/lastSymbolStatisticsOfdayModel.getBalance()));
+                        }
+                        symbolStatisticsOfdayModel.setUpDownRange(upDownRange);
+
+                        Candlestick candlestick = huoBiService.candlestickCache.getUnchecked(transactionConfigModel.getSymbol());
+                        allUsdtBalance += Float.parseFloat(df2.format(candlestick.getClose().floatValue() * balance.getBalance().floatValue()));
+
+                    }
+                }
+            }
+
+            for (String s : stringSymbolStatisticsOfdayModelMap.keySet()) {
+                SymbolStatisticsOfdayModel symbolStatisticsOfdayModel = stringSymbolStatisticsOfdayModelMap.get(s);
+                symbolStatisticsOfdayMapper.addRecord(symbolStatisticsOfdayModel);
+            }
+
+            for (Balance balance : balances) {
+                if(balance != null && "usdt".equals(balance.getCurrency())){
+
+                    allUsdtBalance += balance.getBalance().floatValue();
+
+                    float upDownRange = 0f;
+                    SymbolStatisticsOfdayModel lastSymbolStatisticsOfdayModel = symbolStatisticsOfdayMapper.getRecordBySymbolAndTime("usdt",lastDate);//得到前一天的，计算涨跌幅
+                    if(lastSymbolStatisticsOfdayModel != null){
+                        upDownRange = Float.parseFloat(df2.format((allUsdtBalance-lastSymbolStatisticsOfdayModel.getBalance())/lastSymbolStatisticsOfdayModel.getBalance()));
+                    }
+
+                    SymbolStatisticsOfdayModel symbolStatisticsOfdayModel = new SymbolStatisticsOfdayModel();
+                    symbolStatisticsOfdayModel.setCreateTime(DateUtils.getDateWithStartTime(new Date()));
+                    symbolStatisticsOfdayModel.setSymbol(balance.getCurrency());
+                    symbolStatisticsOfdayModel.setUpDownRange(upDownRange);
+
+                    symbolStatisticsOfdayModel.setBalance(allUsdtBalance);
+
+                    symbolStatisticsOfdayMapper.addRecord(symbolStatisticsOfdayModel);
+
+                    break;
+
+                }
+            }
+        }
+    }
+
+    /**
+     * 得到各余额
+     * @return
+     */
+    public CommonListResult<SymbolStatisticsOfdayModel> getStatisticBalance(){
+
+        Date lastDate = DateUtils.addDay(new Date(), -30);
+        Map<String,List<SymbolStatisticsOfdayModel>> listMap = new HashMap<>();
+
+        List<SymbolStatisticsOfdayModel> symbolStatisticsOfdayModelList = symbolStatisticsOfdayMapper.getRecordByTime(lastDate);
+
+        for (SymbolStatisticsOfdayModel symbolStatisticsOfdayModel : symbolStatisticsOfdayModelList) {
+
+            symbolStatisticsOfdayModel.setUpDownRange(symbolStatisticsOfdayModel.getUpDownRange()*100);
+            List<SymbolStatisticsOfdayModel> list = listMap.get(symbolStatisticsOfdayModel.getSymbol());
+            if(CollectionUtils.isEmpty(list)){
+                list = new ArrayList<>();
+                listMap.put(symbolStatisticsOfdayModel.getSymbol(),list);
+            }
+            list.add(symbolStatisticsOfdayModel);
+        }
+
+        CommonListResult<SymbolStatisticsOfdayModel> result = CommonListResult.getSuccListResult();
+        result.setResult(listMap);
+
+        return result;
+    }
 }
