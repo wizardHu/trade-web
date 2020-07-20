@@ -7,6 +7,7 @@ import com.huobi.client.SyncRequestClient;
 import com.huobi.client.model.Account;
 import com.huobi.client.model.Candlestick;
 import com.huobi.client.model.enums.AccountType;
+import com.huobi.client.model.enums.CandlestickInterval;
 import com.wizard.model.CommonListResult;
 import com.wizard.model.PriceModel;
 import com.wizard.model.TransactionConfigModel;
@@ -16,9 +17,9 @@ import com.wizard.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -33,23 +34,43 @@ public class HuoBiService {
     @Resource
     private TransactionConfigMapper transactionConfigMapper;
 
+    private Integer MAX_TRY = 3;
+
     public LoadingCache<String, Candlestick> candlestickCache = CacheBuilder.newBuilder()
             .expireAfterWrite(1, TimeUnit.MINUTES).build(new CacheLoader<String, Candlestick >() {
         @Override
         public Candlestick  load(String key) {
 
-           /* List<Candlestick> candlestickList = syncRequestClient.getLatestCandlestick(
-                    key, CandlestickInterval.MIN1, 1);
+            int tryTime = 0;
+            while (tryTime < MAX_TRY){
+                try {
+                    List<Candlestick> candlestickList = syncRequestClient.getLatestCandlestick(
+                            key, CandlestickInterval.MIN1, 1);
 
-            if(!CollectionUtils.isEmpty(candlestickList)){
-                return candlestickList.get(0);
+                    if(!CollectionUtils.isEmpty(candlestickList)){
+
+                        Candlestick candlestick = candlestickList.get(0);
+                        if(candlestick == null ){
+                            CommonUtil.sleep(1000);
+                            tryTime++;
+                            continue;
+                        }
+
+                        return candlestick;
+                    }
+
+                } catch (Exception e) {
+                    tryTime++;
+                    CommonUtil.sleep(1000);
+                }
+
             }
 
-            return new Candlestick();*/
+            return new Candlestick();
 
-           Candlestick candlestick = new Candlestick();
+         /*  Candlestick candlestick = new Candlestick();
            candlestick.setClose(new BigDecimal("4.5"));
-            return candlestick;
+            return candlestick;*/
 
         }
     });
