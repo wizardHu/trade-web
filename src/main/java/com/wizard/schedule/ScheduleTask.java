@@ -15,7 +15,7 @@ public class ScheduleTask {
     private StatisticService statisticService;
 
 
-    @Scheduled(cron = "0 0 23 * * ?")
+    @Scheduled(cron = "0 0 22 * * ?")
     private void statisticBalance() {
         log.info("begin statisticBalance");
         statisticService.statisticBalance();

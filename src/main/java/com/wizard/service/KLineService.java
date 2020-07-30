@@ -23,8 +23,8 @@ public class KLineService {
     public CommonListResult<Object[]> getKline(String symbol, String time) {
 
         Date tradeTime = DateUtils.stringToDate(time,"yyyy-MM-dd HH:mm:ss");
-        Date beginTime = DateUtils.addMinute(tradeTime, -1000);
-        Date endTime = DateUtils.addMinute(tradeTime, 1000);
+        Date beginTime = DateUtils.addMinute(tradeTime, -600);
+        Date endTime = DateUtils.addMinute(tradeTime, 300);
 
         log.info("getKline tradeTime={} beginTime={} endTime={}",time,DateUtils.formatDate(beginTime,"yyyy-MM-dd HH:mm:ss"),
                 DateUtils.formatDate(endTime,"yyyy-MM-dd HH:mm:ss"));

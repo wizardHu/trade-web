@@ -37,7 +37,7 @@ public class HuoBiService {
     private Integer MAX_TRY = 3;
 
     public LoadingCache<String, Candlestick> candlestickCache = CacheBuilder.newBuilder()
-            .expireAfterWrite(1, TimeUnit.MINUTES).build(new CacheLoader<String, Candlestick >() {
+            .expireAfterWrite(30, TimeUnit.SECONDS).build(new CacheLoader<String, Candlestick >() {
         @Override
         public Candlestick  load(String key) {
 
