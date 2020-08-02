@@ -92,23 +92,20 @@
             var e = t.data;
 
             if("del" === t.event){
-                layer.prompt({title: '输入任何口令，并确认', formType: 1}, function(pass, index){
-                    layer.close(index);
-                    layui.$.ajax({
-                        url: '/tradeData/delBuyData',
-                        dataType: 'json',
-                        type: 'get',
-                        data:{"id":e.id,"passWord":pass},
-                        success: function (data) {
-                            if(data.isSuccess){
-                                layer.alert("删除成功");
-                                i.reload('LAY-app-content-list')
-                            }else {
-                                layer.alert(data.description);
-                            }
+                layui.$.ajax({
+                    url: '/tradeData/delBuyData',
+                    dataType: 'json',
+                    type: 'get',
+                    data:{"id":e.id},
+                    success: function (data) {
+                        if(data.isSuccess){
+                            layer.alert("删除成功");
+                            i.reload('LAY-app-content-list')
+                        }else {
+                            layer.alert(data.description);
                         }
-                    })
-                });
+                    }
+                })
             }
 
         }),

@@ -23,8 +23,6 @@ public class TransactionConfigAdd {
 
     private Integer status;
 
-    private String passWord;
-
     private Integer pricePrecision;
 
 }

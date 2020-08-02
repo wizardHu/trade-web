@@ -148,13 +148,6 @@
                             </div>
                         </div>
 
-                        <div class="layui-inline">
-                            <label class="layui-form-label">密码</label>
-                            <div class="layui-input-inline">
-                                <input type="passWord" name="passWord" id="passWord" lay-verify="required"
-                                       autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
                     </div>
                 </div>
             </script>
@@ -276,7 +269,6 @@
                                 var period = document.getElementById('period').value;
                                 var precision = document.getElementById('precision').value;
                                 var stopLoss = document.getElementById('stopLoss').value;
-                                var passWord = document.getElementById('passWord').value;
                                 var status = document.getElementById('status').value;
                                 var pricePrecision = document.getElementById('pricePrecision').value;
 
@@ -285,7 +277,7 @@
                                     dataType: 'json',
                                     type: 'get',
                                     data:{"id":id,"symbol":symbol,"everyExpense":everyExpense,"tradeGap":tradeGap,"minIncome":minIncome,"period":period
-                                        ,"precision":precision,"stopLoss":stopLoss,"passWord":passWord,"status":status,"pricePrecision":pricePrecision},
+                                        ,"precision":precision,"stopLoss":stopLoss,"status":status,"pricePrecision":pricePrecision},
                                     success: function (data) {
                                         if(data.isSuccess){
                                             layer.alert("修改成功");
@@ -336,7 +328,7 @@
                 var getTpl = symbolTpl.innerHTML
 
                 laytpl(getTpl).render({"id":"","symbol":"","everyExpense":"","tradeGap":"","minIncome":"","period":""
-                    ,"precision":"","stopLoss":"","passWord":"","status":"","pricePrecision":""}, function (html) {
+                    ,"precision":"","stopLoss":"","status":"","pricePrecision":""}, function (html) {
 
                     layer.open({
                         type: 1,
@@ -353,7 +345,6 @@
                             var period = document.getElementById('period').value;
                             var precision = document.getElementById('precision').value;
                             var stopLoss = document.getElementById('stopLoss').value;
-                            var passWord = document.getElementById('passWord').value;
                             var status = document.getElementById('status').value;
                             var pricePrecision = document.getElementById('pricePrecision').value;
 
@@ -362,7 +353,7 @@
                                 dataType: 'json',
                                 type: 'get',
                                 data:{"id":id,"symbol":symbol,"everyExpense":everyExpense,"tradeGap":tradeGap,"minIncome":minIncome,"period":period
-                                    ,"precision":precision,"stopLoss":stopLoss,"passWord":passWord,"status":status,"pricePrecision":pricePrecision},
+                                    ,"precision":precision,"stopLoss":stopLoss,"status":status,"pricePrecision":pricePrecision},
                                 success: function (data) {
                                     if(data.isSuccess){
                                         layer.alert("修改成功");

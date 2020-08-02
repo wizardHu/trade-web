@@ -6,7 +6,6 @@ import com.wizard.model.from.BuyRecordQuery;
 import com.wizard.model.from.BuySellHistoryRecordQuery;
 import com.wizard.persistence.trade.BuyRecordMapper;
 import com.wizard.persistence.trade.JumpQueueRecordMapper;
-import com.wizard.util.CommonUtil;
 import com.wizard.util.Constant;
 import com.wizard.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -128,22 +127,10 @@ public class BuyRecordService {
     /**
      * 删除
      * @param id
-     * @param passWord
      * @return
      */
     @Transactional(value="tradeTransactionManager")
-    public CommonResult delBuyData(Integer id, String passWord) {
-
-        String pwd = CommonUtil.getNewPwd();
-
-        if(System.currentTimeMillis() - lastTime < 30*1000){
-            return CommonResult.getFailResult("等会再试");
-        }
-
-        if(!pwd.equals(passWord)){
-            lastTime = System.currentTimeMillis();
-            return CommonResult.getFailResult("密码错误");
-        }
+    public CommonResult delBuyData(Integer id) {
 
         BuyRecordQuery query = new BuyRecordQuery();
         query.setId(id);

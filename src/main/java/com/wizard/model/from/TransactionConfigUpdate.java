@@ -25,8 +25,6 @@ public class TransactionConfigUpdate {
 
     private Integer status;
 
-    private String passWord;
-
     private Integer pricePrecision;
 
 

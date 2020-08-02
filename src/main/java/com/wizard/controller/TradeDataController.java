@@ -34,9 +34,9 @@ public class TradeDataController {
 	}
 
 	@RequestMapping("/delBuyData")
-	public CommonResult delBuyData(Integer id,String passWord) {
-		log.info("delBuyData id={}  passWord={}",id,passWord);
-		return buyRecordService.delBuyData(id,passWord);
+	public CommonResult delBuyData(Integer id) {
+		log.info("delBuyData id={} ",id);
+		return buyRecordService.delBuyData(id);
 	}
 //
 //	@RequestMapping("/recordData")

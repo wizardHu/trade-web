@@ -8,7 +8,6 @@ import com.wizard.model.from.TransactionConfigAdd;
 import com.wizard.model.from.TransactionConfigQuery;
 import com.wizard.model.from.TransactionConfigUpdate;
 import com.wizard.persistence.trade.TransactionConfigMapper;
-import com.wizard.util.CommonUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -45,17 +44,6 @@ public class TransactionConfigRecordService {
      * @return
      */
     public CommonResult modTransactionConfigModel(TransactionConfigUpdate transactionConfigUpdate){
-
-        String pwd = CommonUtil.getNewPwd();
-
-        if(System.currentTimeMillis() - lastTime < 30*1000){
-            return CommonResult.getFailResult("等会再试");
-        }
-
-        if(!pwd.equals(transactionConfigUpdate.getPassWord())){
-            lastTime = System.currentTimeMillis();
-            return CommonResult.getFailResult("密码错误");
-        }
 
         int modCount = transactionConfigMapper.modTransactionConfigModel(transactionConfigUpdate);
 
@@ -102,17 +90,6 @@ public class TransactionConfigRecordService {
      * @return
      */
     public CommonResult addTransactionConfig(TransactionConfigAdd transactionConfigAdd){
-
-        String pwd = CommonUtil.getNewPwd();
-
-        if(System.currentTimeMillis() - lastTime < 30*1000){
-            return CommonResult.getFailResult("等会再试");
-        }
-
-        if(!pwd.equals(transactionConfigAdd.getPassWord())){
-            lastTime = System.currentTimeMillis();
-            return CommonResult.getFailResult("密码错误");
-        }
 
         int modCount = transactionConfigMapper.addRecord(transactionConfigAdd);
 

@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class CommonUtil {
 
-    public static String getNewPwd(){
+    public static String getNewPwd(String account){
 
         String pwd = DateUtils.dateToString(new Date(),"yyyyMMddmm");
 
