@@ -123,6 +123,15 @@
                         </div>
 
                         <div class="layui-inline">
+                            <label class="layui-form-label">价格精度</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="pricePrecision" id="pricePrecision" lay-verify="required"
+                                       autocomplete="off"
+                                       class="layui-input"  value="{{d.pricePrecision}}">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
                             <label class="layui-form-label">止损点</label>
                             <div class="layui-input-inline">
                                 <input type="text" name="stopLoss" id="stopLoss" lay-verify="required"
@@ -196,6 +205,10 @@
                 title: "精度",
                 width: 100
             }, {
+                field: "pricePrecision",
+                title: "价格精度",
+                width: 100
+            }, {
                 field: "status",
                 title: "状态",
                 width: 100,
@@ -265,13 +278,14 @@
                                 var stopLoss = document.getElementById('stopLoss').value;
                                 var passWord = document.getElementById('passWord').value;
                                 var status = document.getElementById('status').value;
+                                var pricePrecision = document.getElementById('pricePrecision').value;
 
                                 layui.$.ajax({
                                     url: '/transactionConfig/modTransactionConfigModel',
                                     dataType: 'json',
                                     type: 'get',
                                     data:{"id":id,"symbol":symbol,"everyExpense":everyExpense,"tradeGap":tradeGap,"minIncome":minIncome,"period":period
-                                        ,"precision":precision,"stopLoss":stopLoss,"passWord":passWord,"status":status},
+                                        ,"precision":precision,"stopLoss":stopLoss,"passWord":passWord,"status":status,"pricePrecision":pricePrecision},
                                     success: function (data) {
                                         if(data.isSuccess){
                                             layer.alert("修改成功");
@@ -322,7 +336,7 @@
                 var getTpl = symbolTpl.innerHTML
 
                 laytpl(getTpl).render({"id":"","symbol":"","everyExpense":"","tradeGap":"","minIncome":"","period":""
-                    ,"precision":"","stopLoss":"","passWord":"","status":""}, function (html) {
+                    ,"precision":"","stopLoss":"","passWord":"","status":"","pricePrecision":""}, function (html) {
 
                     layer.open({
                         type: 1,
@@ -341,13 +355,14 @@
                             var stopLoss = document.getElementById('stopLoss').value;
                             var passWord = document.getElementById('passWord').value;
                             var status = document.getElementById('status').value;
+                            var pricePrecision = document.getElementById('pricePrecision').value;
 
                             layui.$.ajax({
                                 url: '/transactionConfig/addTransactionConfig',
                                 dataType: 'json',
                                 type: 'get',
                                 data:{"id":id,"symbol":symbol,"everyExpense":everyExpense,"tradeGap":tradeGap,"minIncome":minIncome,"period":period
-                                    ,"precision":precision,"stopLoss":stopLoss,"passWord":passWord,"status":status},
+                                    ,"precision":precision,"stopLoss":stopLoss,"passWord":passWord,"status":status,"pricePrecision":pricePrecision},
                                 success: function (data) {
                                     if(data.isSuccess){
                                         layer.alert("修改成功");

@@ -291,7 +291,7 @@ public class StatisticService {
                     float upDownRange = 0f;
                     SymbolStatisticsOfdayModel lastSymbolStatisticsOfdayModel = symbolStatisticsOfdayMapper.getRecordBySymbolAndTime("usdt",lastDate);//得到前一天的，计算涨跌幅
                     if(lastSymbolStatisticsOfdayModel != null){
-                        upDownRange = Float.parseFloat(df2.format((allUsdtBalance-lastSymbolStatisticsOfdayModel.getBalance())/lastSymbolStatisticsOfdayModel.getBalance()));
+                        upDownRange = Float.parseFloat(df2.format((allUsdtBalance-237)/237));
                     }
 
                     SymbolStatisticsOfdayModel symbolStatisticsOfdayModel = new SymbolStatisticsOfdayModel();

@@ -59,6 +59,10 @@
                 `precision` = #{precision},
             </if>
 
+            <if test="pricePrecision != null">
+                price_precision = #{pricePrecision},
+            </if>
+
             <if test="status != null">
                 status = #{status},
             </if>
@@ -81,8 +85,8 @@
     </update>
 
     <insert id="addRecord">
-      insert into tb_transaction_config(symbol,every_expense,trade_gap,min_income,period,`precision`,stopLoss,status) VALUES
-      (#{symbol},#{everyExpense},#{tradeGap},#{minIncome},#{period},#{precision},#{stopLoss},#{status})
+      insert into tb_transaction_config(symbol,every_expense,trade_gap,min_income,period,`precision`,stopLoss,status,price_precision) VALUES
+      (#{symbol},#{everyExpense},#{tradeGap},#{minIncome},#{period},#{precision},#{stopLoss},#{status},#{pricePrecision})
     </insert>
 
 

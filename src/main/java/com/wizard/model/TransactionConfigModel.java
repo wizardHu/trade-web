@@ -29,4 +29,6 @@ public class TransactionConfigModel {
 
     private Date updateTime;
 
+    private Integer pricePrecision;
+
 }

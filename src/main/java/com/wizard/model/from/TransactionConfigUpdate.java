@@ -27,5 +27,7 @@ public class TransactionConfigUpdate {
 
     private String passWord;
 
+    private Integer pricePrecision;
+
 
 }

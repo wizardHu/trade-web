@@ -25,4 +25,6 @@ public class TransactionConfigAdd {
 
     private String passWord;
 
+    private Integer pricePrecision;
+
 }
