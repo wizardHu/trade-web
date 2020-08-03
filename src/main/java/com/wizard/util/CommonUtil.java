@@ -12,7 +12,7 @@ public class CommonUtil {
 
     public static String getNewPwd(String account){
 
-        String pwd = DateUtils.dateToString(new Date(),"yyyyMMddmm");
+        String pwd = DateUtils.dateToString(new Date(),"yyyyMMddHH");
 
         Calendar cal=Calendar.getInstance();
         int d = cal.get(Calendar.DATE);

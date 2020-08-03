@@ -42,6 +42,7 @@ public class LoginController {
         }
 
         session.setAttribute(WebSecurityConfig.SESSION_KEY, userName);
+        session.setMaxInactiveInterval(60 * 60 * 24 * 7);
 
         return CommonResult.getSuccResult();
     }
