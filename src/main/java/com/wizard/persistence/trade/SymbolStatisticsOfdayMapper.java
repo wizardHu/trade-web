@@ -13,4 +13,6 @@ public interface SymbolStatisticsOfdayMapper {
     SymbolStatisticsOfdayModel getRecordBySymbolAndTime(@Param("symbol") String symbol, @Param("createTime") Date createTime);
 
     List<SymbolStatisticsOfdayModel> getRecordByTime( @Param("time") Date time);
+
+    Date getLastDate();
 }

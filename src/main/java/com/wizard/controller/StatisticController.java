@@ -1,6 +1,7 @@
 package com.wizard.controller;
 
 import com.wizard.model.CommonListResult;
+import com.wizard.model.CommonResult;
 import com.wizard.model.StatisticProfitModel;
 import com.wizard.model.SymbolStatisticsOfdayModel;
 import com.wizard.service.StatisticService;
@@ -28,6 +29,12 @@ public class StatisticController {
     public CommonListResult<SymbolStatisticsOfdayModel> statisticBalance() {
         log.info("statisticBalance ");
         return statisticService.getStatisticBalance();
+    }
+
+    @RequestMapping("/execute")
+    public CommonResult execute() {
+        log.info("execute ");
+        return statisticService.execute();
     }
 
 

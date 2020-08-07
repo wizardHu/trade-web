@@ -1,5 +1,6 @@
 package com.wizard.service;
 
+import com.alibaba.fastjson.JSON;
 import com.huobi.client.model.Account;
 import com.huobi.client.model.Balance;
 import com.huobi.client.model.Candlestick;
@@ -251,28 +252,34 @@ public class StatisticService {
                 for (Balance balance : balances) {
                     if(balance != null && balance.getCurrency().equals(currency)){
 
+                        try {
+                            SymbolStatisticsOfdayModel symbolStatisticsOfdayModel = stringSymbolStatisticsOfdayModelMap.get(balance.getCurrency());
 
-                        SymbolStatisticsOfdayModel symbolStatisticsOfdayModel = stringSymbolStatisticsOfdayModelMap.get(balance.getCurrency());
+                            if(symbolStatisticsOfdayModel == null){
+                                symbolStatisticsOfdayModel = new SymbolStatisticsOfdayModel();
+                                symbolStatisticsOfdayModel.setBalance(balance.getBalance().floatValue());
+                                symbolStatisticsOfdayModel.setCreateTime(DateUtils.getDateWithStartTime(new Date()));
+                                symbolStatisticsOfdayModel.setSymbol(balance.getCurrency());
+                                stringSymbolStatisticsOfdayModelMap.put(balance.getCurrency(),symbolStatisticsOfdayModel);
+                            }else{
+                                symbolStatisticsOfdayModel.setBalance(symbolStatisticsOfdayModel.getBalance()+balance.getBalance().floatValue());
+                            }
 
-                        if(symbolStatisticsOfdayModel == null){
-                            symbolStatisticsOfdayModel = new SymbolStatisticsOfdayModel();
-                            symbolStatisticsOfdayModel.setBalance(balance.getBalance().floatValue());
-                            symbolStatisticsOfdayModel.setCreateTime(DateUtils.getDateWithStartTime(new Date()));
-                            symbolStatisticsOfdayModel.setSymbol(balance.getCurrency());
-                            stringSymbolStatisticsOfdayModelMap.put(balance.getCurrency(),symbolStatisticsOfdayModel);
-                        }else{
-                            symbolStatisticsOfdayModel.setBalance(symbolStatisticsOfdayModel.getBalance()+balance.getBalance().floatValue());
+                            float upDownRange = 0f;
+                            SymbolStatisticsOfdayModel lastSymbolStatisticsOfdayModel = symbolStatisticsOfdayMapper.getRecordBySymbolAndTime(currency,lastDate);//得到前一天的，计算涨跌幅
+                            if(lastSymbolStatisticsOfdayModel != null && lastSymbolStatisticsOfdayModel.getBalance() != 0){
+                                String upDownRangeStr = df2.format((symbolStatisticsOfdayModel.getBalance()-lastSymbolStatisticsOfdayModel.getBalance())/lastSymbolStatisticsOfdayModel.getBalance());
+                                log.info("currency={} upDownRangeStr={}",currency,upDownRangeStr);
+                                upDownRange = Float.parseFloat(upDownRangeStr);
+                            }
+                            symbolStatisticsOfdayModel.setUpDownRange(upDownRange);
+
+                            Candlestick candlestick = huoBiService.candlestickCache.getUnchecked(transactionConfigModel.getSymbol());
+                            allUsdtBalance += Float.parseFloat(df2.format(candlestick.getClose().floatValue() * balance.getBalance().floatValue()));
+                        } catch (Exception e) {
+                            log.info("balance={}", JSON.toJSONString(balance));
+                            log.error(e.getMessage(),e);
                         }
-
-                        float upDownRange = 0f;
-                        SymbolStatisticsOfdayModel lastSymbolStatisticsOfdayModel = symbolStatisticsOfdayMapper.getRecordBySymbolAndTime(currency,lastDate);//得到前一天的，计算涨跌幅
-                        if(lastSymbolStatisticsOfdayModel != null){
-                            upDownRange = Float.parseFloat(df2.format((symbolStatisticsOfdayModel.getBalance()-lastSymbolStatisticsOfdayModel.getBalance())/lastSymbolStatisticsOfdayModel.getBalance()));
-                        }
-                        symbolStatisticsOfdayModel.setUpDownRange(upDownRange);
-
-                        Candlestick candlestick = huoBiService.candlestickCache.getUnchecked(transactionConfigModel.getSymbol());
-                        allUsdtBalance += Float.parseFloat(df2.format(candlestick.getClose().floatValue() * balance.getBalance().floatValue()));
 
                     }
                 }
@@ -337,4 +344,18 @@ public class StatisticService {
 
         return result;
     }
+
+    public CommonResult execute() {
+
+        Date lastDate = symbolStatisticsOfdayMapper.getLastDate();
+        Date now = new Date();
+
+        if(DateUtils.formatDate(now,"yyyy-MM-dd").equals(DateUtils.formatDate(lastDate,"yyyy-MM-dd"))){
+            return CommonResult.getSuccResult();
+        }
+
+        statisticBalance();
+        return CommonResult.getSuccResult();
+    }
+
 }

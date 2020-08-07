@@ -54,6 +54,8 @@
 
 </div>
 
+<button class="layui-btn layui-btn-normal" id="doStatistic">重新统计</button>
+
 <div class="layui-fluid" id="balanceView">
     <script type="text/html" id="balanceTpl">
         <div class="layui-row layui-col-space15">
@@ -130,11 +132,18 @@
             }
         });
 
+        $(document).on('click',"#doStatistic",function(){
+            layui.$.ajax({
+                url: '/statistic/execute',
+                success: function (data) {
+                    layer.msg("操作成功");
+                }
+            });
+        });
 
         layui.$.ajax({
             url: '/statistic/statisticBalance',
             dataType: 'json',
-            async: false,
             type: 'get',
             success: function (data) {
                 var laytpl = layui.laytpl;

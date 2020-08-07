@@ -19,4 +19,8 @@
     <select id="getRecordByTime" resultType="com.wizard.model.SymbolStatisticsOfdayModel">
         select * from tb_symbol_statistics_ofday where create_time>=#{time} order by create_time asc
     </select>
+
+    <select id="getLastDate" resultType="java.util.Date">
+         select create_time from tb_symbol_statistics_ofday order by id desc limit 1
+    </select>
 </mapper>
