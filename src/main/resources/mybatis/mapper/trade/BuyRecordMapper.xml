@@ -128,4 +128,11 @@
       DELETE from tb_buy_record WHERE id=#{id}
     </delete>
 
+    <insert id="insertHistory">
+
+        insert into tb_buy_sell_history_record(symbol,`type`,oper_type,buy_price,sell_price,buy_order_id,sell_order_id,amount,oper_index,create_time)
+        values (#{symbol},#{type},#{operType},#{buyPrice},#{sellPrice},#{buyOrderId},#{sellOrderId},#{amount},#{operIndex},now())
+
+    </insert>
+
 </mapper>

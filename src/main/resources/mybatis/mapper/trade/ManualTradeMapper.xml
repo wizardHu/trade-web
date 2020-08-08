@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wizard.persistence.trade.ManualTradeMapper" >
+
+
+    <insert id="insertRecord">
+        insert into tb_manual_trade_record(symbol,buy_price,amount,buy_order_id,price_precision,amount_precision,create_time)
+        values (#{symbol},#{buyPrice},#{amount},#{buyOrderId},#{pricePrecision},#{amountPrecision},now())
+    </insert>
+
+    <select id="getAll" resultType="com.wizard.model.ManualTradeBean">
+        select * from tb_manual_trade_record
+    </select>
+
+    <update id="modManualTrade">
+        update tb_manual_trade_record
+        <set>
+
+            <if test="status != null">
+                status = #{status},
+            </if>
+
+            <if test="lowOperPrice != null">
+                low_oper_price = #{lowOperPrice},
+            </if>
+
+            <if test="highOperPrice != null">
+                high_oper_price = #{highOperPrice},
+            </if>
+
+            <if test="sellPrice != null">
+                sell_price = #{sellPrice},
+            </if>
+
+            <if test="sellOrderId != null and sellOrderId != ''">
+                sell_order_id = #{sellOrderId},
+            </if>
+
+        </set>
+
+        where id=#{id}
+    </update>
+
+    <delete id="delById">
+        delete  from tb_manual_trade_record where id=#{id}
+    </delete>
+</mapper>

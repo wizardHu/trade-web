@@ -1,13 +1,18 @@
 package com.wizard.service;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.huobi.client.SyncRequestClient;
 import com.huobi.client.model.Account;
 import com.huobi.client.model.Candlestick;
+import com.huobi.client.model.Order;
 import com.huobi.client.model.enums.AccountType;
 import com.huobi.client.model.enums.CandlestickInterval;
+import com.huobi.client.model.enums.OrderState;
+import com.huobi.client.model.enums.OrderType;
+import com.huobi.client.model.request.NewOrderRequest;
 import com.wizard.model.CommonListResult;
 import com.wizard.model.PriceModel;
 import com.wizard.model.TransactionConfigModel;
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -68,7 +74,7 @@ public class HuoBiService {
 
             return new Candlestick();
 
-         /*  Candlestick candlestick = new Candlestick();
+          /* Candlestick candlestick = new Candlestick();
            candlestick.setClose(new BigDecimal("4.5"));
             return candlestick;*/
 
@@ -116,5 +122,72 @@ public class HuoBiService {
         }
 
         return account;
+    }
+
+    /**
+     * 创建订单
+     * @param symbol
+     * @param amount
+     * @param price
+     * @param type
+     * @return
+     */
+    public Long createOrder(String symbol,BigDecimal amount,BigDecimal price, OrderType type){
+        try {
+
+            log.info("createOrder symbol={},amount={},price={},type={}",symbol,amount.floatValue(),price.floatValue(),type.toString());
+
+            NewOrderRequest request = new NewOrderRequest(
+                    symbol, AccountType.SPOT, type, amount, price);
+
+            log.info("createOrder request={}", JSON.toJSONString(request));
+            long id = syncRequestClient.createOrder(request);
+            log.info("createOrder id={}", id);
+
+            return id;
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
+
+        return null;
+//        return 12l;
+    }
+
+    public Candlestick getCurrentCandlestick(String symbol){
+        try {
+            List<Candlestick> candlestickList = syncRequestClient.getLatestCandlestick(
+                    symbol, CandlestickInterval.MIN1, 1);
+
+            if(!CollectionUtils.isEmpty(candlestickList)) return candlestickList.get(0);
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
+        return null;
+
+       /* if("eosusdt".equals(symbol)){
+            Candlestick candlestick = new Candlestick();
+            candlestick.setClose(new BigDecimal("3.35"));
+            return candlestick;
+        }else{
+            Candlestick candlestick = new Candlestick();
+            candlestick.setClose(new BigDecimal("4.6775"));
+            return candlestick;
+        }*/
+
+    }
+
+    public boolean checkOrder(Long orderId,String symbol) {
+        try {
+            log.info("checkOrder symbol={} orderId={}",symbol,orderId);
+            Order order = syncRequestClient.getOrder(symbol,orderId);
+            log.info("checkOrder resp={}", JSON.toJSONString(order));
+
+            return OrderState.FILLED.toString().equals(order.getState().toString());
+
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
+        return false;
+//        return true;
     }
 }

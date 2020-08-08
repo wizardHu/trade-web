@@ -15,6 +15,8 @@ public class BuySellHistoryRecordModel {
 
 	private Integer type;
 
+	private Integer operType;
+
 	private Float buyPrice;
 
 	private Float sellPrice;

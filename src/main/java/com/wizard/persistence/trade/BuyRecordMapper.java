@@ -18,4 +18,6 @@ public interface BuyRecordMapper {
     int getBuySellHistoryRecordCount(BuySellHistoryRecordQuery query);
 
     int delById(Integer id);
+
+    int insertHistory(BuySellHistoryRecordModel buySellHistoryRecordModel);
 }

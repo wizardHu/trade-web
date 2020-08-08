@@ -41,6 +41,9 @@ public class AmpleeApplicationTests {
 	@Resource
 	private StatisticService statisticService;
 
+	@Resource
+	private ManualTradeService manualTradeService;
+
 	@Test
 	public void getBuyRecord(){
 
@@ -177,4 +180,22 @@ public class AmpleeApplicationTests {
 
 	}
 
+	@Test
+	public void testBuy(){
+
+		ManualTradeAdd manualTradeAdd = new ManualTradeAdd();
+		manualTradeAdd.setSymbol("eosusdt");
+		manualTradeAdd.setAmountPrecision(2);
+		manualTradeAdd.setBuyPrice(2.3f);
+		manualTradeAdd.setPricePrecision(2);
+		manualTradeAdd.setExpense(10f);
+
+		System.out.println(manualTradeService.buy(manualTradeAdd));
+
+	}
+
+	@Test
+	public void checkManualTrade(){
+		manualTradeService.checkManualTrade();
+	}
 }

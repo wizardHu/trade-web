@@ -7,6 +7,9 @@ public class Constant {
 	public static final Integer BUY_TYPE = 1;
 	public static final Integer SELL_TYPE = 0;
 
+	public static final Integer ROBOT_TYPE = 0;
+	public static final Integer MANUAL_TYPE = 1;
+
 	public static final Integer BUY_SELL_FROM = 1;
 	public static final Integer STOP_LOSS_FROM = 2;
 
@@ -80,6 +83,38 @@ public class Constant {
 							.filter(l -> l.getStatus() == status)
 							.findFirst()
 							.orElse(null);
+		}
+	}
+
+	public enum ManualTradeStatusEnum{
+
+		BUY(0,"挂买单"),
+		NORMAL(1,"正常"),
+		SELL(2,"挂卖单");
+
+		private Integer code;
+
+		private String desc;
+
+		ManualTradeStatusEnum(Integer code,String desc){
+			this.code = code;
+			this.desc = desc;
+		}
+
+		public Integer getCode() {
+			return code;
+		}
+
+		public void setCode(Integer code) {
+			this.code = code;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
+
+		public void setDesc(String desc) {
+			this.desc = desc;
 		}
 	}
 
