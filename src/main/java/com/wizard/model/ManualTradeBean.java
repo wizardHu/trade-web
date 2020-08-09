@@ -24,4 +24,7 @@ public class ManualTradeBean {
     private Date createTime;
     private Date updateTime;
     private Float sellPrice;
+
+    private Float profit;
+    private Float profitPercentage;
 }

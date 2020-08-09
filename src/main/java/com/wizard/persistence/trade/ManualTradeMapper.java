@@ -16,4 +16,6 @@ public interface ManualTradeMapper {
 
     int delById(Integer id);
 
+    ManualTradeBean getById(Integer id);
+
 }

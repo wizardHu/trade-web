@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>人工操作</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/modules/laydate/default/laydate.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-config-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-add" data-type="add">增加</button>
+            </div>
+            <table id="LAY-app-manual-list" lay-filter="LAY-app-manual-list"></table>
+            <script type="text/html" id="table-config-list">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="sell"><i
+                        class="layui-icon layui-icon-delete"></i>卖出</a>
+            </script>
+            <script type="text/html" id="statusTpl">
+
+                {{#  if(d.status == 1){ }}
+                <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
+                {{#  } else if(d.status == 0) { }}
+                <button class="layui-btn layui-btn-danger layui-btn-xs">挂买单</button>
+                {{#  } else if(d.status == 2) { }}
+                <button class="layui-btn layui-btn-xs">挂卖单</button>
+                {{#  }              }}
+
+            </script>
+
+            <script type="text/html" id="profitTpl">
+
+                {{#  if(d.profit > 0){ }}
+                <font size="3" color="green"> {{ d.profit }} </font>
+                {{#  } else         { }}
+                <font size="3" color="red"> {{ d.profit }} </font>
+                {{#  }  }}
+
+            </script>
+            <script type="text/html" id="profitPreTpl">
+
+                {{#  if(d.profit > 0){ }}
+                <font size="3" color="green"> {{ d.profitPercentage }} % </font>
+                {{#  } else         { }}
+                <font size="3" color="red"> {{ d.profitPercentage }} % </font>
+                {{#  }  }}
+
+            </script>
+
+            <script type="text/html" id="sellTpl">
+
+                <div class="layui-card">
+                    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">单价</label>
+
+                        <div class="layui-input-inline">
+                            <input type="text" name="sellPrice" id="sellPrice" lay-verify="required"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </script>
+
+            <script type="text/html" id="symbolTpl">
+
+                <div class="layui-card">
+                    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                        <input type="text" name="id" id="id"
+                               value="{{d.id}}" hidden="hidden">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">交易对</label>
+
+                            <div class="layui-input-inline">
+                                <input type="text" name="everyExpense" id="symbol" lay-verify="required"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">交易金额</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="everyExpense" id="expense" lay-verify="required"
+                                       autocomplete="off" class="layui-input" >
+                            </div>
+                        </div>
+
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">价格</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="minIncome" id="buyPrice" lay-verify="required"
+                                       autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">数量精度</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="precision" id="amountPrecision" lay-verify="required"
+                                       autocomplete="off"
+                                       class="layui-input" >
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">价格精度</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="pricePrecision" id="pricePrecision" lay-verify="required"
+                                       autocomplete="off"
+                                       class="layui-input"  >
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </script>
+
+        </div>
+    </div>
+</div>
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table', "laytpl"], function () {
+        var table = layui.table
+            , form = layui.form, laytpl = layui.laytpl;
+
+        table.render({
+            elem: "#LAY-app-manual-list",
+            url: "/manualTrade/getList",
+            cols: [[{
+                field: "id",
+                title: "id"
+            }, {
+                field: "symbol",
+                title: "交易对",
+                minWidth: 100
+            }, {
+                field: "buyPrice",
+                title: "买价格",
+                width: 120
+            }, {
+                field: "amount",
+                title: "数量",
+                width: 100
+
+            }, {
+                field: "profit",
+                title: "收益",
+                minWidth: 100,
+                templet: "#profitTpl"
+            }, {
+                field: "profitPercentage",
+                title: "收益率",
+                width: 150,
+                templet: "#profitPreTpl"
+            }, {
+                field: "status",
+                title: "状态",
+                width: 100,
+                templet: "#statusTpl"
+            }, {
+                field: "lowOperPrice",
+                title: "最低交易价",
+                width: 100
+            }, {
+                field: "highOperPrice",
+                title: "最高交易价",
+                width: 100
+            }, {
+                field: "minIncome",
+                title: "最低收益点",
+                width: 100
+            }, {
+                field: "createTime",
+                title: "创建时间",
+                width: 180
+            }, {
+                field: "updateTime",
+                title: "更新时间",
+                width: 180
+            }, {
+                field: "buyOrderId",
+                title: "买订单号",
+                width: 180
+            }, {
+                field: "sellOrderId",
+                title: "卖订单号",
+                width: 180
+            }, {
+                field: "amountPrecision",
+                title: "数量精度",
+                width: 100
+            }, {
+                field: "pricePrecision",
+                title: "价格精度",
+                width: 100
+            }, {
+                title: "操作",
+                minWidth: 150,
+                align: "center",
+                fixed: "right",
+                toolbar: "#table-config-list"
+            }]],
+            page: true,
+            limits: [10, 15, 20, 25, 30],
+            text: "对不起，加载出现异常！",
+            parseData: function (res) { //res 即为原始返回的数据
+                for (var i = 0; i < res.resultList.length; i++) {
+
+                    if (res.resultList[i].updateTime == null) {
+                        res.resultList[i].updateTime = ""
+                    } else {
+                        res.resultList[i].updateTime = renderTime(res.resultList[i].updateTime)
+                    }
+                    res.resultList[i].createTime = renderTime(res.resultList[i].createTime)
+                }
+
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.description, //解析提示文本
+                    "count": res.totalCount, //解析数据长度
+                    "data": res.resultList //解析数据列表
+                };
+            }, request: {
+                limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+        }),
+            table.on("tool(LAY-app-manual-list)", function (t) {
+                var e = t.data;
+
+                if ("sell" === t.event) {
+
+                    var getTpl = sellTpl.innerHTML
+
+                    var id = e.id
+                    laytpl(getTpl).render(t.data, function (html) {
+
+                        layer.open({
+                            type: 1,
+                            title: "编辑",
+                            content: html,
+                            btn: ["确定", "取消"],
+                            resize: !1,
+                            yes: function (e, tt) {
+                                var sellPrice = document.getElementById('sellPrice').value;
+
+                                layui.$.ajax({
+                                    url: '/manualTrade/sell',
+                                    dataType: 'json',
+                                    type: 'get',
+                                    data:{"id":id,"sellPrice":sellPrice},
+                                    success: function (data) {
+                                        if(data.isSuccess){
+                                            layer.alert("操作成功");
+                                            layer.close(e);
+                                            table.reload('LAY-app-manual-list')
+                                        }else {
+                                            layer.alert(data.description);
+                                        }
+                                    }
+                                })
+                            },
+                            success: function (e, tt) {
+                            }
+                        })
+                    });
+
+                }
+
+            }),
+
+
+        //监听搜索
+        form.on('submit(LAY-app-config-search)', function (data) {
+            var field = data.field;
+
+            //执行重载
+            table.reload('LAY-app-manual-list', {
+                where: field
+            });
+        });
+
+        //事件
+        var active = {
+            add: function(){
+                var getTpl = symbolTpl.innerHTML
+
+                laytpl(getTpl).render({}, function (html) {
+
+                    layer.open({
+                        type: 1,
+                        title: "新增",
+                        content: html,
+                        btn: ["确定", "取消"],
+                        resize: !1,
+                        yes: function (e, tt) {
+                            var symbol = document.getElementById('symbol').value;
+                            var buyPrice = document.getElementById('buyPrice').value;
+                            var expense = document.getElementById('expense').value;
+                            var amountPrecision = document.getElementById('amountPrecision').value;
+                            var pricePrecision = document.getElementById('pricePrecision').value;
+
+                            layui.$.ajax({
+                                url: '/manualTrade/buy',
+                                dataType: 'json',
+                                type: 'get',
+                                data:{"symbol":symbol,"buyPrice":buyPrice,"expense":expense,"amountPrecision":amountPrecision
+                                    ,"pricePrecision":pricePrecision},
+                                success: function (data) {
+                                    if(data.isSuccess){
+                                        layer.alert("操作成功");
+                                        layer.close(e);
+                                        table.reload('LAY-app-manual-list')
+                                    }else {
+                                        layer.alert(data.description);
+                                    }
+                                }
+                            })
+
+                        },
+                        success: function (e, tt) {
+                        }
+                    })
+                });
+
+            }
+        }
+
+        layui.$('.layui-btn.layuiadmin-btn-add').on('click', function(){
+            var type = layui.$(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+
+    function renderTime(date) {
+        var dateee = new Date(date).toJSON();
+        return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+    }
+</script>
+</body>
+</html>

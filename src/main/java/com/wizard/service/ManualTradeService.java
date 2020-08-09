@@ -7,6 +7,7 @@ import com.google.common.cache.LoadingCache;
 import com.huobi.client.model.Candlestick;
 import com.huobi.client.model.enums.OrderType;
 import com.wizard.model.BuySellHistoryRecordModel;
+import com.wizard.model.CommonListResult;
 import com.wizard.model.CommonResult;
 import com.wizard.model.ManualTradeBean;
 import com.wizard.model.from.ManualTradeAdd;
@@ -20,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -80,6 +82,68 @@ public class ManualTradeService {
         }
 
         return CommonResult.getSuccResult();
+    }
+
+    /**
+     * 卖
+     * @param id
+     * @return
+     */
+    public CommonResult sell(Integer id,Float sellPrice) {
+
+        try {
+            ManualTradeBean manualTradeBean = manualTradeMapper.getById(id);
+            if(manualTradeBean != null){
+
+                log.info("begin sell manualTradeBean={}",manualTradeBean);
+                Long sellOrderId = huoBiService.createOrder(manualTradeBean.getSymbol(),new BigDecimal(manualTradeBean.getAmount()+""),new BigDecimal(sellPrice+""),OrderType.SELL_LIMIT);
+                if(sellOrderId != null){
+                    ManualTradeUpdate manualTradeUpdate = new ManualTradeUpdate();
+                    manualTradeUpdate.setId(manualTradeBean.getId());
+                    manualTradeUpdate.setStatus(Constant.ManualTradeStatusEnum.SELL.getCode());
+                    manualTradeUpdate.setSellPrice(sellPrice);
+                    manualTradeUpdate.setSellOrderId(sellOrderId+"");
+
+                    manualTradeMapper.modManualTrade(manualTradeUpdate);
+
+                    manualTradeBeanCache.cleanUp();
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+            return CommonResult.getFailResult(e.getMessage());
+        }
+
+        return CommonResult.getSuccResult();
+    }
+
+    public CommonListResult<ManualTradeBean> getList() {
+
+        CommonListResult<ManualTradeBean> result = CommonListResult.getSuccListResult();
+
+        List<ManualTradeBean> manualTradeBeans = manualTradeMapper.getAll();
+
+        for (ManualTradeBean manualTradeBean : manualTradeBeans) {
+
+            Candlestick candlestick = huoBiService.candlestickCache.getUnchecked(manualTradeBean.getSymbol());
+            if(candlestick != null && candlestick.getClose()!=null){
+
+                Float profit = candlestick.getClose().floatValue() - manualTradeBean.getBuyPrice() ;
+
+                DecimalFormat df2 = new DecimalFormat("0.0000");//格式化小数
+                manualTradeBean.setProfit(Float.parseFloat(df2.format(profit * manualTradeBean.getAmount())));
+                manualTradeBean.setProfitPercentage(Float.parseFloat(df2.format(profit*100/manualTradeBean.getBuyPrice())));
+                manualTradeBean.setMinIncome(new BigDecimal(manualTradeBean.getBuyPrice()*(1+manualTradeBean.getMinIncome())).setScale(manualTradeBean.getPricePrecision(),BigDecimal.ROUND_DOWN ).floatValue());
+
+            }
+
+        }
+
+        result.setResultList(manualTradeBeans);
+        result.setPage(1);
+        result.setPagesize(100);
+        result.setTotalCount(1);
+        return result;
     }
 
     /**
