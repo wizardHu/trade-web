@@ -106,7 +106,7 @@ public class ManualTradeService {
 
                     manualTradeMapper.modManualTrade(manualTradeUpdate);
 
-                    manualTradeBeanCache.cleanUp();
+                    manualTradeBeanCache.invalidateAll();
                 }
             }
         } catch (Exception e) {
@@ -190,7 +190,7 @@ public class ManualTradeService {
 
                                     manualTradeMapper.modManualTrade(manualTradeUpdate);
 
-                                    manualTradeBeanCache.cleanUp();
+                                    manualTradeBeanCache.invalidateAll();
                                 }
                             }else if(price > manualTradeBean.getHighOperPrice()){
 
@@ -238,7 +238,7 @@ public class ManualTradeService {
         manualTradeUpdate.setHighOperPrice(highOperPrice);
         manualTradeMapper.modManualTrade(manualTradeUpdate);
 
-        manualTradeBeanCache.cleanUp();
+        manualTradeBeanCache.invalidateAll();
     }
 
     /**
@@ -258,7 +258,7 @@ public class ManualTradeService {
 
                 manualTradeMapper.modManualTrade(manualTradeUpdate);
 
-                manualTradeBeanCache.cleanUp();
+                manualTradeBeanCache.invalidateAll();
             }
 
         } else if (manualTradeBean.getStatus() == Constant.ManualTradeStatusEnum.SELL.getCode()) {
@@ -282,7 +282,7 @@ public class ManualTradeService {
                     buyRecordMapper.insertHistory(buySellHistoryRecordModel);
 
                 }
-                manualTradeBeanCache.cleanUp();
+                manualTradeBeanCache.invalidateAll();
             }
         }
     }
