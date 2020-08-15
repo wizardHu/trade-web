@@ -11,6 +11,7 @@ public class ManualTradeAdd {
     private Float buyPrice;
     private Float amount;
     private Float expense;
+    private Float minIncome;
     private String buyOrderId;
     private Integer pricePrecision;
     private Integer amountPrecision;

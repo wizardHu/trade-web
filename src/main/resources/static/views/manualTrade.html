@@ -133,6 +133,15 @@
                             </div>
                         </div>
 
+                        <div class="layui-inline">
+                            <label class="layui-form-label">最低收入</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="minIncome" id="minIncome" lay-verify="required"
+                                       autocomplete="off" value="0.05"
+                                       class="layui-input"  >
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </script>
@@ -164,6 +173,10 @@
             }, {
                 field: "buyPrice",
                 title: "买价格",
+                width: 120
+            }, {
+                field: "currentPrice",
+                title: "当前价",
                 width: 120
             }, {
                 field: "amount",

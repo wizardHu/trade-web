@@ -27,4 +27,5 @@ public class ManualTradeBean {
 
     private Float profit;
     private Float profitPercentage;
+    private Float currentPrice;
 }

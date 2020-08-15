@@ -4,8 +4,8 @@
 
 
     <insert id="insertRecord">
-        insert into tb_manual_trade_record(symbol,buy_price,amount,buy_order_id,price_precision,amount_precision,create_time)
-        values (#{symbol},#{buyPrice},#{amount},#{buyOrderId},#{pricePrecision},#{amountPrecision},now())
+        insert into tb_manual_trade_record(symbol,buy_price,amount,buy_order_id,price_precision,amount_precision,create_time,min_income)
+        values (#{symbol},#{buyPrice},#{amount},#{buyOrderId},#{pricePrecision},#{amountPrecision},now(),#{minIncome})
     </insert>
 
     <select id="getAll" resultType="com.wizard.model.ManualTradeBean">

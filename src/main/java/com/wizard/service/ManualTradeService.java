@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,8 @@ public class ManualTradeService {
     private BuyRecordMapper buyRecordMapper;
 
     private final String MANUAL_KEY = "KEY";
+
+    private HashMap<String,Candlestick> candlestickHashMap = new HashMap<>();
 
     public LoadingCache<String, List<ManualTradeBean>> manualTradeBeanCache = CacheBuilder.newBuilder()
             .expireAfterWrite(1, TimeUnit.MINUTES).build(new CacheLoader<String, List<ManualTradeBean>>() {
@@ -134,7 +137,7 @@ public class ManualTradeService {
                 manualTradeBean.setProfit(Float.parseFloat(df2.format(profit * manualTradeBean.getAmount())));
                 manualTradeBean.setProfitPercentage(Float.parseFloat(df2.format(profit*100/manualTradeBean.getBuyPrice())));
                 manualTradeBean.setMinIncome(new BigDecimal(manualTradeBean.getBuyPrice()*(1+manualTradeBean.getMinIncome())).setScale(manualTradeBean.getPricePrecision(),BigDecimal.ROUND_DOWN ).floatValue());
-
+                manualTradeBean.setCurrentPrice(Float.parseFloat(df2.format(candlestick.getClose())));
             }
 
         }
@@ -196,17 +199,22 @@ public class ManualTradeService {
 
                                 float minIncome = manualTradeBean.getBuyPrice() * (1+manualTradeBean.getMinIncome());
 
-                                //更新移动止盈值
-                                if(price > minIncome){
-                                    float low = 0.02f;//下降2%
-                                    float high = 0.015f;//下降1.5%
+                                Candlestick lastCandlestick = candlestickHashMap.get(symbol);
+                                if(lastCandlestick != null){
+                                    if(price > lastCandlestick.getClose().floatValue()){
+                                        //更新移动止盈值
+                                        if(price > minIncome){
+                                            float low = 0.02f;//下降2%
+                                            float high = 0.015f;//下降1.5%
 
-                                    if(manualTradeBean.getHighOperPrice() > minIncome){//增加移动止盈的值
-                                        low = 0.03f;//下降3%
-                                        high = 0.025f;//下降2.5%
+                                            if(manualTradeBean.getHighOperPrice() > minIncome){//增加移动止盈的值
+                                                low = 0.03f;//下降3%
+                                                high = 0.025f;//下降2.5%
+                                            }
+
+                                            updateLowHighPrice(price, manualTradeBean, low, high);
+                                        }
                                     }
-
-                                    updateLowHighPrice(price, manualTradeBean, low, high);
                                 }
                             }
 
@@ -223,6 +231,10 @@ public class ManualTradeService {
                     }
                 }
 
+            }
+
+            if(candlestickHashMap.get(symbol) == null || candlestick.getClose().floatValue() > candlestickHashMap.get(symbol).getClose().floatValue()){
+                candlestickHashMap.put(symbol, candlestick);
             }
         }
 
