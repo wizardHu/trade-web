@@ -339,13 +339,14 @@
                             var expense = document.getElementById('expense').value;
                             var amountPrecision = document.getElementById('amountPrecision').value;
                             var pricePrecision = document.getElementById('pricePrecision').value;
+                            var minIncome = document.getElementById('minIncome').value;
 
                             layui.$.ajax({
                                 url: '/manualTrade/buy',
                                 dataType: 'json',
                                 type: 'get',
                                 data:{"symbol":symbol,"buyPrice":buyPrice,"expense":expense,"amountPrecision":amountPrecision
-                                    ,"pricePrecision":pricePrecision},
+                                    ,"pricePrecision":pricePrecision,"minIncome":minIncome},
                                 success: function (data) {
                                     if(data.isSuccess){
                                         layer.alert("操作成功");
