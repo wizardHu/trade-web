@@ -27,6 +27,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -189,5 +190,22 @@ public class HuoBiService {
         }
         return false;
 //        return true;
+    }
+
+    public List<Candlestick> getCandlestick(String symbol,CandlestickInterval candlestickInterval,int size){
+
+        try {
+
+            //【{当前}，{上一个}，{上上一个}】
+            List<Candlestick> candlestickList = syncRequestClient.getLatestCandlestick(
+                 symbol, candlestickInterval, size);
+            //  【{上上一个}，{上一个}，{当前}】
+            Collections.reverse(candlestickList);
+            return candlestickList;
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
+
+        return null;
     }
 }

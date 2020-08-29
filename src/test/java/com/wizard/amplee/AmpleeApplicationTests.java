@@ -1,5 +1,6 @@
 package com.wizard.amplee;
 
+import com.huobi.client.model.enums.CandlestickInterval;
 import com.wizard.model.*;
 import com.wizard.model.from.*;
 import com.wizard.service.*;
@@ -43,6 +44,9 @@ public class AmpleeApplicationTests {
 
 	@Resource
 	private ManualTradeService manualTradeService;
+
+	@Resource
+	private HuoBiService huoBiService;
 
 	@Test
 	public void getBuyRecord(){
@@ -197,5 +201,10 @@ public class AmpleeApplicationTests {
 	@Test
 	public void checkManualTrade(){
 		manualTradeService.checkManualTrade();
+	}
+
+	@Test
+	public void getCandlestick(){
+		huoBiService.getCandlestick("eosusdt", CandlestickInterval.MIN30,10);
 	}
 }
