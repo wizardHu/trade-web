@@ -54,6 +54,8 @@ public class StrategyService {
                 if(lastId.longValue() != candlestick.getId().longValue()){
                     MACDUtil.add(symbolConfigModel.getSymbol(), candlestick.getClose().floatValue());
                     lastIdMap.put(symbolConfigModel.getSymbol(), candlestick.getId());
+                }else{
+                    continue;
                 }
 
                 boolean canBuy = MACDUtil.check(symbolConfigModel.getSymbol(), candlestick.getClose().floatValue());
